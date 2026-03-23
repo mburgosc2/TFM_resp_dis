@@ -214,6 +214,7 @@ data/
 *.webm
 *.zip
 *.jsonl
+*.json
 
 # Modelos entrenados pesados
 *.pkl
