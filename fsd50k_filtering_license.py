@@ -98,3 +98,18 @@ for lista_labels in df_respiratorios['labels'].dropna():
 
 # Ver qué subcategorías reales y frecuencias tienen tus datos
 print(pd.Series(etiquetas_respiratorias).value_counts())
+
+
+
+# ==========================================
+# 💾 EXPORTACIÓN DE IDS A ARCHIVO TXT
+# ==========================================
+# Definimos el nombre del archivo de salida
+PATH_SALIDA_TXT = 'ids_finales_casa_clase_0.txt'
+
+# Guardamos la columna 'fname' directamente como texto plano (un ID por línea)
+df_clase_0_final['fname'].to_csv(PATH_SALIDA_TXT, index=False, header=False)
+
+print(f"💾 Archivo '{PATH_SALIDA_TXT}' guardado con éxito.")
+print(f"Contiene los {len(df_clase_0_final)} IDs listos para el script de descarga.")
+print("="*60)
