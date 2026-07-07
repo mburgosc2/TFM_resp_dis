@@ -109,9 +109,9 @@ def extract_features_batch(df_meta, split_name):
 
 
 if __name__ == '__main__':
-    PATH_IN_TRAIN = r"C:\Users\Usuario\Desktop\UNI MARINA\master\TFM\TFM_resp_dis\metadata_splits_experiment_random\metadata_train.csv"
-    PATH_IN_VAL = r"C:\Users\Usuario\Desktop\UNI MARINA\master\TFM\TFM_resp_dis\metadata_splits_experiment_random\metadata_val.csv"
-    PATH_IN_TEST = r"C:\Users\Usuario\Desktop\UNI MARINA\master\TFM\TFM_resp_dis\metadata_splits_experiment_random\metadata_test.csv"
+    PATH_IN_TRAIN = r"C:\Users\Usuario\Desktop\UNI MARINA\master\TFM\TFM_resp_dis\metadata_splits_experiment_poor\metadata_train.csv"
+    PATH_IN_VAL = r"C:\Users\Usuario\Desktop\UNI MARINA\master\TFM\TFM_resp_dis\metadata_splits_experiment_poor\metadata_val.csv"
+    PATH_IN_TEST = r"C:\Users\Usuario\Desktop\UNI MARINA\master\TFM\TFM_resp_dis\metadata_splits_experiment_poor\metadata_test.csv"
 
     print("Cargando ficheros de metadatos segmentados...")
     df_train = pd.read_csv(PATH_IN_TRAIN)
@@ -123,7 +123,7 @@ if __name__ == '__main__':
     X_val, y_val, seg_val, orig_val, _ = extract_features_batch(df_val, "VALIDATION")
     X_test, y_test, seg_test, orig_test, _ = extract_features_batch(df_test, "TEST")
 
-    PATH_OUTPUT_DIR = r"C:\Users\Usuario\Desktop\UNI MARINA\master\TFM\TFM_resp_dis\features_extracted_experiment_random"
+    PATH_OUTPUT_DIR = r"C:\Users\Usuario\Desktop\UNI MARINA\master\TFM\TFM_resp_dis\features_extracted_experiment_poor"
     os.makedirs(PATH_OUTPUT_DIR, exist_ok=True)
 
     np.save(os.path.join(PATH_OUTPUT_DIR, "X_train.npy"), X_train)

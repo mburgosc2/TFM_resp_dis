@@ -7,7 +7,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 # =====================================================================
 # 📂 FASE 1: CARGA DE CARACTERÍSTICAS PRE-EXTRAÍDAS (117 DESCRIPTORES)
 # =====================================================================
-PATH_FEATURES_DIR = r"C:\Users\Usuario\Desktop\UNI MARINA\master\TFM\TFM_resp_dis\features_extracted_experiment_random"
+PATH_FEATURES_DIR = r"C:\Users\Usuario\Desktop\UNI MARINA\master\TFM\TFM_resp_dis\features_extracted_experiment_poor"
 
 print("=" * 80)
 # Las cargas se realizan sobre las matrices de NumPy salvadas por el extractor de audio

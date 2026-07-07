@@ -8,8 +8,8 @@ from sklearn.metrics import confusion_matrix, roc_curve, roc_auc_score
 # =====================================================================
 # 📂 FASE 1: CARGA Y PREPARACIÓN DE DATOS
 # =====================================================================
-PATH_FEATURES_DIR = r"C:\Users\Usuario\Desktop\UNI MARINA\master\TFM\TFM_resp_dis\features_extracted_experiment_random"
-PATH_OUTPUT_GRAPHS = r"C:\Users\Usuario\Desktop\UNI MARINA\master\TFM\TFM_resp_dis\graphs_results_experiment_random"
+PATH_FEATURES_DIR = r"C:\Users\Usuario\Desktop\UNI MARINA\master\TFM\TFM_resp_dis\features_extracted_experiment_poor"
+PATH_OUTPUT_GRAPHS = r"C:\Users\Usuario\Desktop\UNI MARINA\master\TFM\TFM_resp_dis\graphs_results_experiment_poor"
 os.makedirs(PATH_OUTPUT_GRAPHS, exist_ok=True)
 
 X_train_raw = np.load(os.path.join(PATH_FEATURES_DIR, "X_train.npy"))

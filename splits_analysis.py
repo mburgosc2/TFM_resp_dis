@@ -51,10 +51,10 @@ def segment_int_df(df_split, window_size=10.0, max_safe_threshold=20.0):
 def main():
     # 1. Configurar los argumentos de la terminal
     parser = argparse.ArgumentParser(description="Split del Dataset Maestro para el TFM")
-    parser.add_argument('--mode', type=str, choices=['random', 'calidad'], default='random',
-                        help="Modo de split: 'random' (puro) o 'calidad' (segregación forzada)")
+    parser.add_argument('--mode', type=str, choices=['random', 'audio_quality'], default='random',
+                        help="Modo de split: 'random' (puro) o 'audio_quality' (segregación forzada)")
     parser.add_argument('--test_quality', type=str, choices=['poor', 'ok'], default='poor',
-                        help="Si el modo es 'calidad', qué calidad de tos se enviará exclusivamente a Test")
+                        help="Si el modo es 'audio_quality', qué calidad de tos se enviará exclusivamente a Test")
     
     args = parser.parse_args()
 
