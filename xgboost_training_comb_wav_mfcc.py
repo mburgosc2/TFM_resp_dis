@@ -59,23 +59,40 @@ X_test = (X_test_raw - train_mean) / (train_std + 1e-8)
 # 🔍 FASE 3: GRID SEARCH DE HIPERPARÁMETROS (155 FEATURES, 5-FOLDS)
 # =====================================================================
 print("\n" + "=" * 80)
-print(" 🔄 INICIANDO GRID SEARCH XGBOOST SOBRE FUSIÓN (5-FOLDS ESTRATIFICADOS)")
+print(" 🔄 GRID SEARCH CON BÚSQUEDA DE PESOS DE CLASE Y MODELO (5-FOLDS)")
 print(" Target Optimization Metric: Macro F1-Score")
 print("=" * 80)
 
+# Diccionarios de pesos candidato para [c0: No-Cough, c1: Dry, c2: Wet, c3: Unknown]
+class_weight_candidates = [
+    'balanced',                             # Opción estándar de Scikit-Learn
+    {0: 1.0, 1: 2.0, 2: 4.0, 3: 4.0},       # Enfoque moderado
+    {0: 1.0, 1: 2.0, 2: 6.0, 3: 6.0},       # Penalización alta para Wet y Unknown
+    {0: 1.0, 1: 3.0, 2: 8.0, 3: 8.0},       # Penalización agresiva
+    {0: 0.5, 1: 2.0, 2: 5.0, 3: 5.0}        # Reducción de peso en No-Cough
+]
+
 param_grid = {
-    'max_depth': [3, 4, 5],
-    'learning_rate': [0.01, 0.03, 0.05],
+    'max_depth': [3, 4],
+    'learning_rate': [0.03, 0.05],
     'subsample': [0.7, 0.8],
-    'colsample_bytree': [0.6, 0.8],  # Submuestreo de características clave al tener 155
+    'colsample_bytree': [0.6],
     'min_child_weight': [1, 3]
 }
 
+def get_sample_weights(y_arr, weight_strategy):
+    if weight_strategy == 'balanced':
+        return compute_sample_weight('balanced', y_arr)
+    else:
+        return np.array([weight_strategy[int(label)] for label in y_arr])
+
 best_score = -1.0
 best_params = {}
+best_weights = None
 combo_counter = 0
 
-total_combos = (len(param_grid['max_depth']) * 
+total_combos = (len(class_weight_candidates) * 
+                len(param_grid['max_depth']) * 
                 len(param_grid['learning_rate']) * 
                 len(param_grid['subsample']) * 
                 len(param_grid['colsample_bytree']) * 
@@ -83,56 +100,59 @@ total_combos = (len(param_grid['max_depth']) *
 
 start_grid_time = time.time()
 
-for depth in param_grid['max_depth']:
-    for lr in param_grid['learning_rate']:
-        for sub in param_grid['subsample']:
-            for col in param_grid['colsample_bytree']:
-                for mcw in param_grid['min_child_weight']:
-                    combo_counter += 1
-                    fold_f1_scores = []
+for w_strat in class_weight_candidates:
+    for depth in param_grid['max_depth']:
+        for lr in param_grid['learning_rate']:
+            for sub in param_grid['subsample']:
+                for col in param_grid['colsample_bytree']:
+                    for mcw in param_grid['min_child_weight']:
+                        combo_counter += 1
+                        fold_f1_scores = []
 
-                    for fold_idx in range(5):
-                        cv_val_mask = (folds_train == fold_idx)
-                        cv_train_mask = ~cv_val_mask
+                        for fold_idx in range(5):
+                            cv_val_mask = (folds_train == fold_idx)
+                            cv_train_mask = ~cv_val_mask
+                            
+                            X_cv_train, y_cv_train = X_train[cv_train_mask], y_train[cv_train_mask]
+                            X_cv_val, y_cv_val = X_train[cv_val_mask], y_train[cv_val_mask]
+                            
+                            sample_weights_cv = get_sample_weights(y_cv_train, w_strat)
+                            
+                            xgb_fold = XGBClassifier(
+                                n_estimators=150,
+                                max_depth=depth,
+                                learning_rate=lr,
+                                subsample=sub,
+                                colsample_bytree=col,
+                                min_child_weight=mcw,
+                                objective='multi:softprob',
+                                num_class=4,
+                                random_state=42,
+                                n_jobs=-1
+                            )
+                            
+                            xgb_fold.fit(X_cv_train, y_cv_train, sample_weight=sample_weights_cv)
+                            preds_fold = xgb_fold.predict(X_cv_val)
+                            f1_macro = f1_score(y_cv_val, preds_fold, average='macro', zero_division=0)
+                            fold_f1_scores.append(f1_macro)
                         
-                        X_cv_train, y_cv_train = X_train[cv_train_mask], y_train[cv_train_mask]
-                        X_cv_val, y_cv_val = X_train[cv_val_mask], y_train[cv_val_mask]
+                        mean_cv_f1 = np.mean(fold_f1_scores)
+                        print(f"[{combo_counter}/{total_combos}] Weights: {w_strat} | Depth: {depth} | LR: {lr:.2f} | Sub: {sub} | Col: {col} | MCW: {mcw} => Mean CV Macro F1: {mean_cv_f1:.4f}")
                         
-                        sample_weights_cv = compute_sample_weight('balanced', y_cv_train)
-                        
-                        xgb_fold = XGBClassifier(
-                            n_estimators=150,
-                            max_depth=depth,
-                            learning_rate=lr,
-                            subsample=sub,
-                            colsample_bytree=col,
-                            min_child_weight=mcw,
-                            objective='multi:softprob',
-                            num_class=4,
-                            random_state=42,
-                            n_jobs=-1
-                        )
-                        
-                        xgb_fold.fit(X_cv_train, y_cv_train, sample_weight=sample_weights_cv)
-                        preds_fold = xgb_fold.predict(X_cv_val)
-                        f1_macro = f1_score(y_cv_val, preds_fold, average='macro', zero_division=0)
-                        fold_f1_scores.append(f1_macro)
-                    
-                    mean_cv_f1 = np.mean(fold_f1_scores)
-                    print(f"[{combo_counter}/{total_combos}] Depth: {depth} | LR: {lr:.2f} | Sub: {sub} | Col: {col} | MCW: {mcw} => Mean CV Macro F1: {mean_cv_f1:.4f}")
-                    
-                    if mean_cv_f1 > best_score:
-                        best_score = mean_cv_f1
-                        best_params = {
-                            'max_depth': depth,
-                            'learning_rate': lr,
-                            'subsample': sub,
-                            'colsample_bytree': col,
-                            'min_child_weight': mcw
-                        }
+                        if mean_cv_f1 > best_score:
+                            best_score = mean_cv_f1
+                            best_weights = w_strat
+                            best_params = {
+                                'max_depth': depth,
+                                'learning_rate': lr,
+                                'subsample': sub,
+                                'colsample_bytree': col,
+                                'min_child_weight': mcw
+                            }
 
 print("\n" + "=" * 80)
 print(f" 🏆 MEJORES HIPERPARÁMETROS FUSIÓN (Macro F1 CV: {best_score:.4f}):")
+print(f"    - Estrategia de Pesos Optimizada: {best_weights}")
 for k, v in best_params.items():
     print(f"    - {k}: {v}")
 print(f"    - Tiempo total de búsqueda: {time.time() - start_grid_time:.2f}s")
@@ -143,7 +163,7 @@ print("=" * 80)
 # =====================================================================
 print("\n ENTRENANDO MODELO XGBOOST FUSIONADO ÓPTIMO SOBRE TODO TRAIN...")
 
-sample_weights_train = compute_sample_weight('balanced', y_train)
+sample_weights_train = get_sample_weights(y_train, best_weights)
 
 xgb_best = XGBClassifier(
     n_estimators=200,
