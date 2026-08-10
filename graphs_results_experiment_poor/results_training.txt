@@ -1,0 +1,34 @@
+✓ X_train escalado: (7639, 117)  | Mean ≈ 0.0000 | Std ≈ 1.0000
+✓ X_val escalado:   (1639, 117)
+✓ X_test escalado:  (1632, 117)
+
+   • Fold 0 - F1-Score: 0.9565
+   • Fold 1 - F1-Score: 0.9611
+   • Fold 2 - F1-Score: 0.9613
+   • Fold 3 - F1-Score: 0.9681
+   • Fold 4 - F1-Score: 0.9462
+
+📈 RENDIMIENTO MEDIO DEL MODELO EN VALIDACIÓN CRUZADA: 0.9587
+
+✓ Modelo final entrenado sobre el dataset completo en 5.27s
+
+📊 Conjunto TRAIN      :
+   • Accuracy:  0.9962
+   • Precision: 0.9844
+   • Recall:    1.0000 (Sensibilidad)
+   • F1-Score:  0.9921
+   • ROC-AUC:   0.9998
+
+📊 Conjunto VALIDATION :
+   • Accuracy:  0.9762
+   • Precision: 0.9514
+   • Recall:    0.9490 (Sensibilidad)
+   • F1-Score:  0.9502
+   • ROC-AUC:   0.9968
+
+📊 Conjunto TEST (BLIND):
+   • Accuracy:  0.9706
+   • Precision: 0.9858
+   • Recall:    0.9327 (Sensibilidad)
+   • F1-Score:  0.9585
+   • ROC-AUC:   0.9975
