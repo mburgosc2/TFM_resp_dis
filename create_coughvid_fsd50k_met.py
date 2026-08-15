@@ -28,15 +28,38 @@ print(f" Audios filtrados de FSD50K (Clase 0): {len(df_fsd50k_filtrado)}")
 # -------------------------------------------------------------
 # PROCESAR COUGHVID
 # -------------------------------------------------------------
-df_coughvid['dataset_origin'] = 'COUGHVID'
+df_coughvid["dataset_origin"] = "COUGHVID"
 
-# Definir label (1 para toses, 0 para no_cough)
-# Toses reales: quality en 'good', 'ok', 'poor'
-df_coughvid['label'] = np.where(df_coughvid['quality'].isin(['good', 'ok', 'poor']), 1, 0)
+# Normalizar las etiquetas
+df_coughvid["cough_type"] = (
+    df_coughvid["cough_type"]
+    .astype(str)
+    .str.strip()
+    .str.lower()
+)
 
-# Definir type_noise según tu regla
-df_coughvid['type_noise'] = np.where(df_coughvid['quality'] == 'no_cough', 'no_cough', 'cough')
+valid_cough_types = {"no_cough", "dry", "wet", "unknown"}
 
+unexpected_types = (
+    set(df_coughvid["cough_type"].unique())
+    - valid_cough_types
+)
+
+if unexpected_types:
+    raise ValueError(
+        f"Tipos de tos inesperados en COUGHVID: {unexpected_types}"
+    )
+
+# Etapa 1: no_cough=0; cualquier tipo de tos=1
+df_coughvid["label"] = (
+    df_coughvid["cough_type"] != "no_cough"
+).astype(int)
+
+df_coughvid["type_noise"] = np.where(
+    df_coughvid["label"] == 0,
+    "no_cough",
+    "cough",
+)
 # -------------------------------------------------------------
 # PROCESAR FSD50K (Para acoplarlo a la estructura común)
 # -------------------------------------------------------------
@@ -46,18 +69,21 @@ df_fsd50k_comun = pd.DataFrame()
 df_fsd50k_comun['uuid'] = df_fsd50k_filtrado['fname'].astype(str)
 df_fsd50k_comun['type_noise'] = df_fsd50k_filtrado['labels'] # Inyecta las etiquetas originales (guitarras, música...)
 df_fsd50k_comun['quality'] = 'no_cough'
+df_fsd50k_comun["cough_type"] = "no_cough"
+df_fsd50k_comun["cough_type_consensus"] = "not_applicable"
 df_fsd50k_comun['label'] = 0  # FSD50K es 100% clase negativa
 df_fsd50k_comun['dataset_origin'] = 'FSD50K'
 
 # Añadir el resto de columnas de COUGHVID que FSD50K no posee (rellenándolas con NaN automáticamente)
 columnas_coughvid = [
     'datetime', 'cough_detected', 'SNR', 'latitude', 'longitude', 'age', 'gender', 
-    'respiratory_condition', 'fever_muscle_pain', 'status', 'cough_type', 'dyspnea', 
-    'wheezing', 'stridor', 'choking', 'congestion', 'nothing', 'diagnosis', 'severity'
+    'respiratory_condition', 'fever_muscle_pain', 'status', 'cough_type', "cough_type_consensus", 
+    'dyspnea', 'wheezing', 'stridor', 'choking', 'congestion', 'nothing', 'diagnosis', 'severity'
 ]
 
 for col in columnas_coughvid:
-    df_fsd50k_comun[col] = np.nan
+    if col not in df_fsd50k_comun.columns:
+        df_fsd50k_comun[col] = np.nan
 
 # -------------------------------------------------------------
 # CONCATENAR AMBOS DATASETS
@@ -65,7 +91,7 @@ for col in columnas_coughvid:
 # Asegurarnos de que el orden de las columnas sea idéntico para concatenar limpio
 columnas_totales_ordenadas = [
     'uuid', 'datetime', 'cough_detected', 'SNR', 'latitude', 'longitude', 'age', 'gender', 
-    'respiratory_condition', 'fever_muscle_pain', 'status', 'quality', 'cough_type', 
+    'respiratory_condition', 'fever_muscle_pain', 'status', 'quality', 'cough_type', "cough_type_consensus",
     'dyspnea', 'wheezing', 'stridor', 'choking', 'congestion', 'nothing', 'diagnosis', 'severity',
     'label', 'dataset_origin', 'type_noise'
 ]
