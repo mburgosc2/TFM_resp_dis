@@ -220,3 +220,8 @@ data/
 *.pkl
 *.h5
 *.onnx
+
+README.md
+
+# Features generados de cocleogramas
+features_extracted_multiclass_4c_cochleogram_experiment_random/

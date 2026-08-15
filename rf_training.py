@@ -1,5 +1,6 @@
 import os
 import time
+import joblib
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
@@ -7,7 +8,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 # =====================================================================
 # 📂 FASE 1: CARGA DE CARACTERÍSTICAS PRE-EXTRAÍDAS (117 DESCRIPTORES)
 # =====================================================================
-PATH_FEATURES_DIR = r"C:\Users\Usuario\Desktop\UNI MARINA\master\TFM\TFM_resp_dis\features_extracted_experiment_poor"
+PATH_FEATURES_DIR = r"C:\Users\Usuario\Desktop\UNI MARINA\master\TFM\TFM_resp_dis\features_extracted_experiment_random"
 
 print("=" * 80)
 # Las cargas se realizan sobre las matrices de NumPy salvadas por el extractor de audio
@@ -129,3 +130,21 @@ for split_name, X_set, y_true in [
 print("\n" + "=" * 80)
 print(" Pipeline terminado. Datos listos para la discusión de resultados.")
 print("=" * 80)
+
+
+# 1. Guardar el modelo entrenado y la normalización
+PATH_MODELS_DIR = os.path.join(PATH_FEATURES_DIR, "saved_models")
+os.makedirs(PATH_MODELS_DIR, exist_ok=True)
+
+joblib.dump(rf_final, os.path.join(PATH_MODELS_DIR, "stage1_rf_model.pkl"))
+print(f"✓ Modelo guardado en: {PATH_MODELS_DIR}")
+
+# 2. Obtener predicciones en TEST
+y_test_pred = rf_final.predict(X_test)
+
+# Guardar qué muestras de TEST la Etapa 1 clasificó como TOS (clase 1)
+cough_indices_test = np.where(y_test_pred == 1)[0]
+np.save(os.path.join(PATH_FEATURES_DIR, "stage1_test_predicted_coughs_idx.npy"), cough_indices_test)
+
+print(f"✓ Total muestras de TEST: {len(y_test)}")
+print(f"✓ Muestras de TEST identificadas como TOS por Etapa 1: {len(cough_indices_test)}")
