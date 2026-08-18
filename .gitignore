@@ -225,3 +225,6 @@ README.md
 
 # Features generados de cocleogramas
 features_extracted_multiclass_4c_cochleogram_experiment_random/
+
+# Muestra local de audios para auditar la segmentacion
+auditory_sample_audio_events/
