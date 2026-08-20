@@ -1,0 +1,5 @@
+﻿config_key,segmentation_config,audit_group,audio_count,event_count,merged_event_count,event_exceeds_output_window_count,non_overlap_adjusted_event_count,events_per_audio_mean,events_per_audio_median,events_per_audio_p95,fallback_count,fallback_pct,adjacent_pair_count,overlapping_pair_count,overlapping_pair_pct,overlap_50_pair_count,overlap_50_pair_pct,overlap_75_pair_count,overlap_75_pair_pct,segments_any_overlap,segments_any_overlap_pct,segments_overlap_50,segments_overlap_50_pct
+final,top15_margin6_smooth30_gap500_min80_win1500,dry_gold,5,11,8,0,2,2.2,2.0,3.0,0,0.0,6,0,0.0,0,0.0,0,0.0,0,0.0,0,0.0
+final,top15_margin6_smooth30_gap500_min80_win1500,dry_weak,5,9,7,0,4,1.8,2.0,2.8,0,0.0,4,0,0.0,0,0.0,0,0.0,0,0.0,0,0.0
+final,top15_margin6_smooth30_gap500_min80_win1500,wet_gold,5,15,9,0,8,3.0,3.0,4.6,0,0.0,10,0,0.0,0,0.0,0,0.0,0,0.0,0,0.0
+final,top15_margin6_smooth30_gap500_min80_win1500,wet_weak,5,22,13,0,18,4.4,4.0,5.8,0,0.0,17,0,0.0,0,0.0,0,0.0,0,0.0,0,0.0

@@ -1,0 +1,4 @@
+﻿config_key,segmentation_config,segmentation_method,top_db,snr_margin_db,hysteresis_db,smoothing_ms,merge_gap_ms,min_event_ms,max_event_ms,output_window_ms
+gap_200,top15_margin6_smooth30_gap200_min80_win1500,energy_hysteresis_bounded_merge_v2,15.0,6.0,3.0,30.0,200.0,80.0,2000.0,1500.0
+gap_350,top15_margin6_smooth30_gap350_min80_win1500,energy_hysteresis_bounded_merge_v2,15.0,6.0,3.0,30.0,350.0,80.0,2000.0,1500.0
+gap_500,top15_margin6_smooth30_gap500_min80_win1500,energy_hysteresis_bounded_merge_v2,15.0,6.0,3.0,30.0,500.0,80.0,2000.0,1500.0

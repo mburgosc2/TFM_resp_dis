@@ -1,0 +1,13 @@
+﻿split,cough_type,cough_type_consensus,rows,original_uuids
+test,dry,gold_expert,12,12
+test,dry,weak_expert,256,256
+test,wet,gold_expert,1,1
+test,wet,weak_expert,79,79
+train,dry,gold_expert,56,56
+train,dry,weak_expert,1191,1191
+train,wet,gold_expert,6,6
+train,wet,weak_expert,370,370
+validation,dry,gold_expert,12,12
+validation,dry,weak_expert,256,256
+validation,wet,gold_expert,1,1
+validation,wet,weak_expert,80,80

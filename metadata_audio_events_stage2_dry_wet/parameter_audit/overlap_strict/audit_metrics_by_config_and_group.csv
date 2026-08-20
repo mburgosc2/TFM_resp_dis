@@ -1,0 +1,13 @@
+﻿config_key,segmentation_config,audit_group,audio_count,event_count,merged_event_count,event_exceeds_output_window_count,events_per_audio_mean,events_per_audio_median,events_per_audio_p95,fallback_count,fallback_pct,adjacent_pair_count,overlapping_pair_count,overlapping_pair_pct,overlap_50_pair_count,overlap_50_pair_pct,overlap_75_pair_count,overlap_75_pair_pct,segments_any_overlap,segments_any_overlap_pct,segments_overlap_50,segments_overlap_50_pct
+gap_200,top15_margin6_smooth30_gap200_min80_win1500,dry_gold,5,12,8,0,2.4,2.0,3.0,0,0.0,7,2,28.571428571428573,1,14.285714285714286,0,0.0,2,40.0,1,20.0
+gap_200,top15_margin6_smooth30_gap200_min80_win1500,dry_weak,5,9,6,0,1.8,2.0,2.8,0,0.0,4,2,50.0,0,0.0,0,0.0,2,40.0,0,0.0
+gap_200,top15_margin6_smooth30_gap200_min80_win1500,wet_gold,5,16,8,0,3.2,3.0,5.3999999999999995,0,0.0,11,7,63.63636363636363,0,0.0,0,0.0,3,60.0,0,0.0
+gap_200,top15_margin6_smooth30_gap200_min80_win1500,wet_weak,5,26,12,0,5.2,5.0,6.0,0,0.0,21,18,85.71428571428571,5,23.80952380952381,0,0.0,5,100.0,3,60.0
+gap_350,top15_margin6_smooth30_gap350_min80_win1500,dry_gold,5,11,8,0,2.2,2.0,3.0,0,0.0,6,1,16.666666666666668,0,0.0,0,0.0,1,20.0,0,0.0
+gap_350,top15_margin6_smooth30_gap350_min80_win1500,dry_weak,5,9,7,0,1.8,2.0,2.8,0,0.0,4,2,50.0,0,0.0,0,0.0,2,40.0,0,0.0
+gap_350,top15_margin6_smooth30_gap350_min80_win1500,wet_gold,5,15,9,0,3.0,3.0,4.6,0,0.0,10,5,50.0,0,0.0,0,0.0,3,60.0,0,0.0
+gap_350,top15_margin6_smooth30_gap350_min80_win1500,wet_weak,5,23,13,0,4.6,4.0,5.8,0,0.0,18,13,72.22222222222223,0,0.0,0,0.0,5,100.0,0,0.0
+gap_500,top15_margin6_smooth30_gap500_min80_win1500,dry_gold,5,11,8,0,2.2,2.0,3.0,0,0.0,6,1,16.666666666666668,0,0.0,0,0.0,1,20.0,0,0.0
+gap_500,top15_margin6_smooth30_gap500_min80_win1500,dry_weak,5,9,7,0,1.8,2.0,2.8,0,0.0,4,2,50.0,0,0.0,0,0.0,2,40.0,0,0.0
+gap_500,top15_margin6_smooth30_gap500_min80_win1500,wet_gold,5,15,9,0,3.0,3.0,4.6,0,0.0,10,5,50.0,0,0.0,0,0.0,3,60.0,0,0.0
+gap_500,top15_margin6_smooth30_gap500_min80_win1500,wet_weak,5,22,13,0,4.4,4.0,5.8,0,0.0,17,12,70.58823529411765,0,0.0,0,0.0,4,80.0,0,0.0

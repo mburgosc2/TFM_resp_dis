@@ -1,0 +1,2 @@
+﻿segmentation_config,segmentation_method,enforce_non_overlap,top_db,snr_margin_db,hysteresis_db,smoothing_ms,merge_gap_ms,min_event_ms,max_event_ms,output_window_ms
+top15_margin6_smooth30_gap500_min80_win1500,energy_hysteresis_bounded_merge_nonoverlap_v3,True,15.0,6.0,3.0,30.0,500.0,80.0,2000.0,1500.0
