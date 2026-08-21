@@ -1,0 +1,2 @@
+﻿raw_dimension,maximum_components_fitted,selected_components,pca_fit_weighting,component_scaling,classifier_weighting,validation_used_for_selection,test_processed
+4096,128,64,1_over_events_per_recording,weighted_standard_scaler,class_balanced_and_1_over_events_per_recording,False,False

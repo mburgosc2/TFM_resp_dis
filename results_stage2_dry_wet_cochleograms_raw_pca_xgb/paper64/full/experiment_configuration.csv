@@ -1,0 +1,2 @@
+﻿pca_components,search_strategy,candidate_count,class_balance,smote_used,scale_pos_weight_used,early_stopping_used,validation_used_for_hyperparameter_selection,test_processed,n_estimators,max_depth,learning_rate,min_child_weight,subsample,colsample_bytree,reg_lambda,gamma,xgb_tree_count,xgb_total_nodes,xgb_total_leaves,xgb_total_split_nodes,xgb_mean_nodes_per_tree
+64,deterministic_parameter_sampler,36,manual_sample_weight,False,False,False,False,False,100,3,0.03,10,0.7,1.0,1.0,0.3,100,1192,646,546,11.92

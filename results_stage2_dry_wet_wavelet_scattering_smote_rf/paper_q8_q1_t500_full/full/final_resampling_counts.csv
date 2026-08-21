@@ -1,0 +1,2 @@
+﻿candidate_key,sampling_strategy,k_neighbors,dry_events_before,wet_events_before,dry_events_after,wet_events_after,synthetic_wet_events_added,wet_to_dry_ratio_after
+smote__ratio0p75__k3,0.75,3,3200,1030,3200,2400,1370,0.75

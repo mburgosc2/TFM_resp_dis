@@ -1,0 +1,2 @@
+﻿pca_components,max_samples,class_weight,smote_used,validation_used_for_hyperparameter_selection,test_processed,n_estimators,max_depth,min_samples_leaf,max_features,rf_tree_count,rf_total_nodes,rf_total_leaves,rf_mean_nodes_per_tree,rf_max_observed_depth
+64,0.8,none_manual_sample_weight_used,False,False,False,300,6,5,0.5,300,24782,12541,82.60666666666667,6

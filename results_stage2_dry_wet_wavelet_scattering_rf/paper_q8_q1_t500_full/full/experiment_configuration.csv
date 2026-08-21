@@ -1,0 +1,2 @@
+﻿input_feature_count,pca_used,feature_selection_used,temporal_aggregation_used,temporal_aggregation,standardization_used,smote_used,max_samples,validation_used_for_hyperparameter_selection,test_processed,n_estimators,max_depth,min_samples_leaf,max_features,rf_tree_count,rf_total_nodes,rf_total_leaves,rf_mean_nodes_per_tree,rf_max_observed_depth
+644,False,False,True,mean_scattering_positions,False,False,0.8,False,False,300,10,5,0.1,300,81278,40789,270.9266666666667,10

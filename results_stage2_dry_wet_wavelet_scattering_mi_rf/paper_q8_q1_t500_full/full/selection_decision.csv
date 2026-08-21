@@ -1,0 +1,2 @@
+﻿best_macro_f1_oof,macro_f1_tolerance,eligible_candidates,selected_candidate,selection_rule
+0.6271826869080008,0.005,mi_100pct__k644,mi_100pct__k644,smallest_feature_count_with_macro_f1_within_0.005_of_best

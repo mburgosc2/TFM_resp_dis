@@ -220,11 +220,37 @@ data/
 *.pkl
 *.h5
 *.onnx
+models_stage2_dry_wet_cochleograms/
+models_stage2_dry_wet_cochleograms_raw_pca/
+models_stage2_dry_wet_cochleograms_raw_pca_rf/
+models_stage2_dry_wet_cochleograms_raw_pca_xgb/
+models_stage2_dry_wet_wavelet_scattering_rf/
+models_stage2_dry_wet_wavelet_scattering_mi_rf/
+models_stage2_dry_wet_wavelet_scattering_smote_rf/
+
+# Salidas de las pruebas tecnicas rapidas (no son resultados finales)
+results_stage2_dry_wet_cochleograms/**/quick/
+graphs_results_stage2_dry_wet_random/training_cochleograms/**/quick/
+results_stage2_dry_wet_cochleograms_raw_pca/**/quick/
+graphs_results_stage2_dry_wet_random/training_cochleograms_raw_pca/**/quick/
+results_stage2_dry_wet_cochleograms_raw_pca_rf/**/quick/
+graphs_results_stage2_dry_wet_random/training_cochleograms_raw_pca_rf/**/quick/
+results_stage2_dry_wet_cochleograms_raw_pca_xgb/**/quick/
+graphs_results_stage2_dry_wet_random/training_cochleograms_raw_pca_xgb/**/quick/
+results_stage2_dry_wet_wavelet_scattering_rf/**/quick/
+graphs_results_stage2_dry_wet_random/training_wavelet_scattering_rf/**/quick/
+results_stage2_dry_wet_wavelet_scattering_mi_rf/**/quick/
+graphs_results_stage2_dry_wet_random/training_wavelet_scattering_mi_rf/**/quick/
+results_stage2_dry_wet_wavelet_scattering_smote_rf/**/quick/
+graphs_results_stage2_dry_wet_random/training_wavelet_scattering_smote_rf/**/quick/
 
 README.md
 
 # Features generados de cocleogramas
 features_extracted_multiclass_4c_cochleogram_experiment_random/
+features_extracted_stage2_dry_wet_cochleograms/
+features_extracted_stage2_dry_wet_cochleograms_raw/
+features_extracted_stage2_dry_wet_wavelet_scattering/
 
 # Muestra local de audios para auditar la segmentacion
 auditory_sample_audio_events/

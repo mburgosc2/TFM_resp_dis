@@ -1,0 +1,2 @@
+﻿input_feature_count,selected_feature_count,selected_feature_fraction,mi_neighbors,mi_ranking_unit,macro_f1_tolerance,fixed_rf,pca_used,smote_used,validation_used_for_feature_selection,test_processed,rf_tree_count,rf_total_nodes,rf_total_leaves,rf_mean_nodes_per_tree,rf_max_observed_depth
+644,644,1.0,3,mean_event_features_per_original_uuid,0.005,rf__trees300__depth10__leaf5__features0p1,False,False,False,False,300,81278,40789,270.9266666666667,10
