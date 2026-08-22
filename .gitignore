@@ -216,10 +216,34 @@ data/
 *.jsonl
 *.json
 
-# Modelos entrenados pesados
+# Arrays, tensores y caches de features generados
+*.npy
+*.npz
+*.parquet
+*.feather
+
+# Modelos entrenados y checkpoints pesados
 *.pkl
+*.pickle
+*.joblib
+*.keras
 *.h5
+*.hdf5
 *.onnx
+*.tflite
+*.pb
+*.pt
+*.pth
+*.safetensors
+*.ckpt
+*.ckpt.*
+*.index
+*.data-*
+checkpoint
+models_*/
+
+# Directorios historicos de modelos (redundantes con models_*/, se
+# conservan para documentar explicitamente los experimentos existentes)
 models_stage2_dry_wet_cochleograms/
 models_stage2_dry_wet_cochleograms_raw_pca/
 models_stage2_dry_wet_cochleograms_raw_pca_rf/
@@ -227,6 +251,8 @@ models_stage2_dry_wet_cochleograms_raw_pca_xgb/
 models_stage2_dry_wet_wavelet_scattering_rf/
 models_stage2_dry_wet_wavelet_scattering_mi_rf/
 models_stage2_dry_wet_wavelet_scattering_smote_rf/
+models_stage2_dry_wet_wavelet_scattering_recording_rf/
+models_stage2_dry_wet_wavelet_scattering_recording_pca_rf/
 
 # Salidas de las pruebas tecnicas rapidas (no son resultados finales)
 results_stage2_dry_wet_cochleograms/**/quick/
@@ -243,6 +269,10 @@ results_stage2_dry_wet_wavelet_scattering_mi_rf/**/quick/
 graphs_results_stage2_dry_wet_random/training_wavelet_scattering_mi_rf/**/quick/
 results_stage2_dry_wet_wavelet_scattering_smote_rf/**/quick/
 graphs_results_stage2_dry_wet_random/training_wavelet_scattering_smote_rf/**/quick/
+results_stage2_dry_wet_wavelet_scattering_recording_rf/**/quick/
+graphs_results_stage2_dry_wet_random/training_wavelet_scattering_recording_rf/**/quick/
+results_stage2_dry_wet_wavelet_scattering_recording_pca_rf/**/quick/
+graphs_results_stage2_dry_wet_random/training_wavelet_scattering_recording_pca_rf/**/quick/
 
 README.md
 
@@ -251,6 +281,14 @@ features_extracted_multiclass_4c_cochleogram_experiment_random/
 features_extracted_stage2_dry_wet_cochleograms/
 features_extracted_stage2_dry_wet_cochleograms_raw/
 features_extracted_stage2_dry_wet_wavelet_scattering/
+features_extracted_stage2_dry_wet_logmel/
+
+# Modelos de la CNN Log-Mel (incluye checkpoints binarios)
+models_stage2_dry_wet_logmel_tiny_cnn/
+
+# Salidas tecnicas de la CNN Log-Mel
+results_stage2_dry_wet_logmel_tiny_cnn/**/quick/
+graphs_results_stage2_dry_wet_random/training_logmel_tiny_cnn/**/quick/
 
 # Muestra local de audios para auditar la segmentacion
 auditory_sample_audio_events/

@@ -1,0 +1,3 @@
+﻿dataset,recording_count,wst_threshold_oof,mfcc_threshold_oof,pearson_score,spearman_score,prediction_disagreement_pct,correctness_pearson,both_correct,wst_only_correct,mfcc_only_correct,both_wrong,wet_wst_errors_recovered_by_mfcc,dry_wst_errors_recovered_by_mfcc,wet_mfcc_errors_recovered_by_wst,dry_mfcc_errors_recovered_by_wst
+train_oof,1623,0.5451205938234057,0.5829386662229422,0.44009513877756107,0.4372597980296801,30.129390018484287,0.30202029809574293,869,269,220,265,48,172,94,175
+validation,349,0.5451205938234057,0.5829386662229422,0.47905660761181057,0.4808395556622016,29.512893982808023,0.33220351113373703,183,57,46,63,7,39,19,38

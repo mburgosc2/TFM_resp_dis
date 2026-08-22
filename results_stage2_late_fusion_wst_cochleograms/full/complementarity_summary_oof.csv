@@ -1,0 +1,3 @@
+﻿coch_model,pearson_score,spearman_score,prediction_disagreement_pct,both_correct,wst_only_correct,coch_only_correct,both_wrong,wet_wst_errors_recovered,dry_wst_errors_recovered
+coch_raw_pca64_rf,0.4027597767631337,0.39531029993975403,28.958718422674064,906,232,238,247,42,196
+coch_raw_pca64_xgb,0.37313082364866007,0.3696374408218547,30.252618607516947,896,242,249,236,40,209

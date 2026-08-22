@@ -1,0 +1,2 @@
+﻿coch_model,pearson_score,spearman_score,prediction_disagreement_pct,both_correct,wst_only_correct,coch_only_correct,both_wrong,wet_wst_errors_recovered,dry_wst_errors_recovered
+coch_summary_recording_lr,0.4961370447585052,0.49636201956328424,28.36676217765043,189,51,48,61,5,43

@@ -1,0 +1,2 @@
+﻿coch_model,secondary_model,pearson_score,spearman_score,prediction_disagreement_pct,both_correct,wst_only_correct,coch_only_correct,both_wrong,wet_wst_errors_recovered,dry_wst_errors_recovered
+mfcc117_recording_lr,mfcc117_recording_lr,0.4790566076118105,0.4808395556622016,29.512893982808023,183,57,46,63,7,39

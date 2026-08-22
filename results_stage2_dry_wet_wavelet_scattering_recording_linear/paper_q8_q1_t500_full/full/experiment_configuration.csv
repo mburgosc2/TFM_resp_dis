@@ -1,0 +1,2 @@
+﻿input_feature_count,pooling_key,pca_options,standard_scaler_used,pca_whiten,smote_used,class_balance,selection_metric,validation_used_for_selection,test_processed,overall_oof_winner
+1932,mean_std_max,none|32|64|128|256,True,False,False,sample_weight balanced per recording,train_oof_macro_f1,False,False,logistic_regression__C0.001__pca128

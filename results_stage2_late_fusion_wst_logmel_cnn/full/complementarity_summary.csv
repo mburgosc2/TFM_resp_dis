@@ -1,0 +1,3 @@
+﻿dataset,recording_count,pearson_score,spearman_score,prediction_disagreement_pct,both_correct,wst_only_correct,cnn_only_correct,both_wrong,wet_wst_errors_recovered_by_cnn,dry_wst_errors_recovered_by_cnn,wst_threshold_oof,cnn_threshold_oof
+train_oof,1623,0.5150452416201562,0.5100429507392643,27.0486752926679,925,213,226,259,49,177,0.5451205938234057,0.5510583445429802
+validation,349,0.5938966231874612,0.582215478425339,22.922636103151863,202,38,42,67,7,35,0.5451205938234057,0.5510583445429802

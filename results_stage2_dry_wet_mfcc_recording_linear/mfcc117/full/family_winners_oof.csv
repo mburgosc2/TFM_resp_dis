@@ -1,0 +1,2 @@
+﻿model_family,candidate_key,selected_overall_oof,threshold_oof,accuracy,balanced_accuracy,macro_f1,dry_precision,wet_precision,dry_recall,wet_recall,roc_auc,average_precision_wet,tn_dry_correct,fp_dry_as_wet,fn_wet_as_dry,tp_wet_correct
+logistic_regression,logistic_regression__C10__pca128,True,0.5829386662229422,0.6709796672828097,0.5861887679366651,0.5763686309779846,0.8118985126859143,0.33541666666666664,0.7441860465116279,0.42819148936170215,0.6211716630551622,0.3203868761981697,928,319,215,161

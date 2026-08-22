@@ -1,0 +1,2 @@
+﻿input_feature_count,pooling_key,selected_projection,pca_components,pca_explained_variance_percent,pipeline_order,selected_rf,threshold_selection,fixed_threshold_reported,smote_used,validation_used_for_selection,test_processed,rf_tree_count,rf_total_nodes,rf_total_leaves,rf_mean_nodes_per_tree,rf_max_observed_depth
+1932,mean_std_max,no_pca,,,no_scaler_no_pca_then_rf,rf__trees100__depth6__leaf5__features0p5,train_oof_macro_f1,0.5,False,False,False,100,6310,3205,63.1,6
