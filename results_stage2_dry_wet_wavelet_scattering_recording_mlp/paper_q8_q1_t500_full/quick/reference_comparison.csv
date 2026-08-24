@@ -1,0 +1,3 @@
+﻿model,candidate,oof_macro_f1,validation_macro_f1,validation_wet_recall
+wst_recording_mlp,tiny__h32x8__drop0p25__l20p001__lr0p0005,0.5919327610358823,,
+wst_recording_logistic_regression_reference,logistic_regression__C0.001__pca128,0.6269324482583261,0.6257170125052884,0.6049382716049383
