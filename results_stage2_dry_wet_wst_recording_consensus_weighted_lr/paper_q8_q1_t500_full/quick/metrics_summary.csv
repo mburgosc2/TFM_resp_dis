@@ -1,0 +1,2 @@
+﻿dataset,candidate_key,gold_multiplier,threshold,model_size_kb_joblib,learned_inference_float_count,accuracy,balanced_accuracy,macro_f1,dry_precision,wet_precision,dry_recall,wet_recall,roc_auc,average_precision_wet,tn_dry_correct,fp_dry_as_wet,fn_wet_as_dry,tp_wet_correct
+train_oof,logistic_regression__C0.001__pca128__gold3,3.0,0.5633860400428725,,0,0.7134935304990758,0.6426487399546145,0.6291521645873597,0.84,0.4059196617336152,0.7746591820368885,0.5106382978723404,0.6853341636949957,0.3823360986112314,966,281,184,192

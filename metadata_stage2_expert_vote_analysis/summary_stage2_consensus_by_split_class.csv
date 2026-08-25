@@ -1,0 +1,13 @@
+﻿split,cough_type,cough_type_consensus,recording_count,percentage
+test,dry,gold_expert,12,4.477611940298507
+test,dry,weak_expert,256,95.5223880597015
+test,wet,gold_expert,1,1.25
+test,wet,weak_expert,79,98.75
+train,dry,gold_expert,56,4.490777866880514
+train,dry,weak_expert,1191,95.5092221331195
+train,wet,gold_expert,6,1.5957446808510638
+train,wet,weak_expert,370,98.40425531914893
+validation,dry,gold_expert,12,4.477611940298507
+validation,dry,weak_expert,256,95.5223880597015
+validation,wet,gold_expert,1,1.2345679012345678
+validation,wet,weak_expert,80,98.76543209876543

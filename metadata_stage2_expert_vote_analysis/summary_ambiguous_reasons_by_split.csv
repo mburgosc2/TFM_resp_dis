@@ -1,0 +1,5 @@
+﻿split,consensus_reason,recording_count,percentage
+test,tie_2-2__4_evaluators,3,100.0
+train,no_type_votes,1,7.142857142857143
+train,tie_2-2__4_evaluators,13,92.85714285714286
+validation,tie_2-2__4_evaluators,3,100.0

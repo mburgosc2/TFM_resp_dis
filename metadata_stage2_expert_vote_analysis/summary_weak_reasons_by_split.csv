@@ -1,0 +1,6 @@
+﻿split,consensus_reason,recording_count,percentage
+test,only_1_evaluator,335,100.0
+train,4_evaluators_2_vs_1_vs_1,9,0.5765534913516976
+train,only_1_evaluator,1552,99.4234465086483
+validation,4_evaluators_2_vs_1_vs_1,1,0.2976190476190476
+validation,only_1_evaluator,335,99.70238095238095

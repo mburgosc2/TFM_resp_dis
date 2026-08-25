@@ -1,0 +1,2 @@
+﻿experiment,input_feature_count,pooling_key,gold_multipliers,weak_multiplier,class_balance,standard_scaler_used,selection_metric,validation_used_for_selection,test_processed,winner
+wst_recording_consensus_weighted_lr,1932,mean_std_max,1.0|1.5|2.0|3.0,1.0,equal total weight per class after consensus,True,train_oof_macro_f1,False,False,logistic_regression__C0.001__pca128__gold3

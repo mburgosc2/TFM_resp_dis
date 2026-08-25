@@ -1,0 +1,10 @@
+﻿split,cough_type,vote_pattern,recording_count,percentage
+test,dry,dry1_wet0_unknown0,256,100.0
+test,wet,dry0_wet1_unknown0,79,100.0
+train,dry,dry1_wet0_unknown0,1186,99.58018471872376
+train,dry,dry2_wet1_unknown1,5,0.41981528127623846
+train,wet,dry0_wet1_unknown0,366,98.91891891891892
+train,wet,dry1_wet2_unknown1,4,1.0810810810810811
+validation,dry,dry1_wet0_unknown0,256,100.0
+validation,wet,dry0_wet1_unknown0,79,98.75
+validation,wet,dry1_wet2_unknown1,1,1.25

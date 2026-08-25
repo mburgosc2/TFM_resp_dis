@@ -263,6 +263,21 @@ EXPERIMENTS: list[dict[str, Any]] = [
         "note": "Compara capacidad y regularizacion; usa la mediana de tres inner splits y registra precision, recall, F1, AUC, loss y learning rate por epoca.",
     },
     {
+        "id": "W13",
+        "name": "WST recording + LR + augmentation gold",
+        "family": "Wavelet Scattering + data augmentation",
+        "unit": "Grabacion; OOF y validation solo con originales",
+        "representation": "1932 mean+std+max; 48 grabaciones gold aumentadas solo en ajuste",
+        "reduction": "StandardScaler + PCA64 dentro de cada fold",
+        "balance": "Pesos gold/wet; variantes excluidas junto a su padre del fold OOF",
+        "classifier": "Regresion logistica",
+        "metrics": "results_stage2_dry_wet_wst_recording_lr_gold_augmentation/paper_q8_q1_t500_full/full/metrics_summary.csv",
+        "folds": "results_stage2_dry_wet_wst_recording_lr_gold_augmentation/paper_q8_q1_t500_full/full/best_cv_fold_metrics_original_only.csv",
+        "config": "results_stage2_dry_wet_wst_recording_lr_gold_augmentation/paper_q8_q1_t500_full/full/experiment_configuration.csv",
+        "candidates": "results_stage2_dry_wet_wst_recording_lr_gold_augmentation/paper_q8_q1_t500_full/full/phase_b_candidate_cv_results.csv",
+        "note": "Ganador oficial por macro-F1 OOF: C=0,001/PCA64/gold1/wet-cost1,15. Validation macro-F1=0,5845 y recalls dry/wet=0,6754/0,5556: el augmentation no mejora W06. La alternativa con mayor balanced accuracy OOF es C=0,0003/PCA64/gold1/wet-cost1,3 (0,6579; recalls 0,7041/0,6117), pero no fue el ganador del protocolo.",
+    },
+    {
         "id": "F01",
         "name": "Late fusion WST-LR + cocleograma event",
         "family": "Fusión WST + cocleograma",
@@ -407,7 +422,12 @@ def first_dataset(df: pd.DataFrame, dataset: str) -> pd.Series | None:
     dataset_column = "dataset" if "dataset" in df.columns else "split"
     if dataset_column not in df.columns:
         return None
-    rows = df[df[dataset_column].astype(str) == dataset]
+    aliases = {
+        "train_oof": ("train_oof", "train_oof_original_only"),
+        "validation": ("validation", "validation_original_only"),
+    }
+    accepted = aliases.get(dataset, (dataset,))
+    rows = df[df[dataset_column].astype(str).isin(accepted)]
     if rows.empty:
         return None
 
@@ -599,6 +619,23 @@ def build_fold_detail() -> pd.DataFrame:
     frames = []
     for spec in EXPERIMENTS:
         path = absolute(spec.get("folds"))
+        if path is None or not path.is_file():
+            continue
+        data = pd.read_csv(path)
+        data.insert(0, "experiment_name", spec["name"])
+        data.insert(0, "experiment_id", spec["id"])
+        data["source_file"] = str(path.relative_to(SCRIPT_DIR))
+        frames.append(data)
+    if not frames:
+        return pd.DataFrame()
+    return pd.concat(frames, ignore_index=True, sort=False)
+
+
+def build_candidate_detail() -> pd.DataFrame:
+    """Recoge rejillas OOF declaradas por los experimentos."""
+    frames = []
+    for spec in EXPERIMENTS:
+        path = absolute(spec.get("candidates"))
         if path is None or not path.is_file():
             continue
         data = pd.read_csv(path)
@@ -855,6 +892,7 @@ def main() -> None:
     summary = build_summary()
     detail = build_metric_detail()
     folds = build_fold_detail()
+    candidates = build_candidate_detail()
     configurations = build_configurations()
     ranking = build_ranking(summary)
     notes = build_notes()
@@ -865,6 +903,7 @@ def main() -> None:
         add_dataframe_sheet(writer, "Ranking_validation", ranking)
         add_dataframe_sheet(writer, "Metricas_detalle", detail)
         add_dataframe_sheet(writer, "CV_por_fold", folds)
+        add_dataframe_sheet(writer, "Candidatos_OOF", candidates)
         add_dataframe_sheet(writer, "PCA_RF_actual", pca_current)
         add_dataframe_sheet(writer, "Configuraciones", configurations)
         add_dataframe_sheet(writer, "Notas_y_protocolo", notes)
@@ -876,6 +915,7 @@ def main() -> None:
     print(f"Experimentos finalizados: {finalized}")
     print(f"Experimentos en ejecucion: {running}")
     print(f"Filas de metricas detalladas: {len(detail)}")
+    print(f"Filas de candidatos OOF: {len(candidates)}")
 
 
 if __name__ == "__main__":
