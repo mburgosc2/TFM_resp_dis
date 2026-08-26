@@ -1,0 +1,24 @@
+parameter,value
+experiment,mfcc117_lr_random
+family,lr
+winner,lr__C0p3__l1__weight_none
+selection_rule,maximum OOF macro-F1; ties by recall and AUC
+feature_source,C:\Users\Usuario\Desktop\UNI MARINA\master\TFM\TFM_resp_dis\features_extracted_stage1_random\mfcc117
+split_mode,random
+target_mapping,0=no_cough; 1=dry|wet|unknown
+test_quality_forced,not_applicable
+n_features,117
+threshold,0.5
+threshold_selection,fixed; no threshold tuning
+fit_final_seconds,0.12356020000879653
+model_size_kb,4.9970703125
+C,0.3
+penalty,l1
+class_weight,
+trainable_parameters,118
+deployment_float_values,352
+tree_nodes_total,0
+benchmark_samples,1000
+desktop_batch_ms_per_sample,0.001233886666886974
+desktop_single_sample_ms,0.1825675999862142
+benchmark_note,desktop Python reference; not a mobile latency measurement

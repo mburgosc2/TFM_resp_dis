@@ -1,0 +1,23 @@
+parameter,value
+experiment,mfcc117_rf_compact_audio_quality_poor
+family,rf
+winner,rf__trees25__depth8__leaf5
+selection_rule,smallest forest within 0.005 OOF macro-F1 and recall of the 300-tree baseline (floors=0.969010/0.949098)
+feature_source,C:\Users\Usuario\Desktop\UNI MARINA\master\TFM\TFM_resp_dis\features_extracted_stage1_audio_quality_poor\mfcc117
+target_mapping,0=no_cough; 1=dry|wet|unknown
+test_quality_forced,poor
+n_features,117
+threshold,0.5
+threshold_selection,fixed; no threshold tuning
+fit_final_seconds,0.25324049999471754
+model_size_kb,325.4775390625
+n_estimators,25
+max_depth,8
+min_samples_leaf,5
+trainable_parameters,0
+deployment_float_values,0
+tree_nodes_total,4023
+benchmark_samples,1000
+desktop_batch_ms_per_sample,0.016778600000058454
+desktop_single_sample_ms,18.463990199990803
+benchmark_note,desktop Python reference; not a mobile latency measurement

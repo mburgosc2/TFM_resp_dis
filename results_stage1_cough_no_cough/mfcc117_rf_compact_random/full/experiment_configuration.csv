@@ -1,0 +1,24 @@
+parameter,value
+experiment,mfcc117_rf_compact_random
+family,rf
+winner,rf__trees25__depth8__leaf2
+selection_rule,smallest forest within 0.005 OOF macro-F1 and recall of the 300-tree baseline (floors=0.969605/0.952868)
+feature_source,C:\Users\Usuario\Desktop\UNI MARINA\master\TFM\TFM_resp_dis\features_extracted_stage1_random\mfcc117
+split_mode,random
+target_mapping,0=no_cough; 1=dry|wet|unknown
+test_quality_forced,not_applicable
+n_features,117
+threshold,0.5
+threshold_selection,fixed; no threshold tuning
+fit_final_seconds,0.2707541999989189
+model_size_kb,376.7275390625
+n_estimators,25
+max_depth,8
+min_samples_leaf,2
+trainable_parameters,0
+deployment_float_values,0
+tree_nodes_total,4679
+benchmark_samples,1000
+desktop_batch_ms_per_sample,0.01696082666652122
+desktop_single_sample_ms,18.737380800012033
+benchmark_note,desktop Python reference; not a mobile latency measurement

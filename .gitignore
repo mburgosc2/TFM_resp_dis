@@ -287,6 +287,8 @@ features_extracted_stage2_dry_wet_wavelet_scattering/
 features_extracted_stage2_dry_wet_wavelet_scattering_temporal/
 features_extracted_stage2_dry_wet_logmel/
 features_extracted_stage2_dry_wet_wst_gold_augmentation/
+features_extracted_stage1_audio_quality_*/
+features_extracted_stage1_random/
 
 # Modelos de la CNN Log-Mel (incluye checkpoints binarios)
 models_stage2_dry_wet_logmel_tiny_cnn/
