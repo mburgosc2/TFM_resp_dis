@@ -1,0 +1,13 @@
+﻿metric,value
+cough_candidates_total,279
+cough_selected_license_safe,239
+cough_rejected_license,40
+cough_selected_cc_by_3_0,130
+cough_selected_cc0_1_0,109
+cough_selected_train,208
+cough_selected_validation,31
+cough_additional_labels_manual_review,7
+cough_already_present,239
+cough_missing_to_extract,0
+existing_negative_audio_license_safe,7471
+stage2_eligible_fsd50k_cough,0

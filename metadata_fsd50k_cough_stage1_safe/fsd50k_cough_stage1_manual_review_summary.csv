@@ -1,0 +1,9 @@
+﻿metric,value
+reviewed_total,239
+approved_cough_label_1,172
+rejected_no_audible_cough,67
+approved_fsd50k_official_train,152
+approved_fsd50k_official_val,20
+approved_unique_uploaders,95
+approved_stage2_eligible,0
+approved_missing_audio,0

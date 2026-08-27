@@ -1,0 +1,15 @@
+﻿parameter,value
+experiment,stage1_fsd50k_coughs_random
+seed,42
+inner_seed,94
+inner_seed_selection,minimum grouped stratum imbalance on TRAIN among seeds 42..141; no model metrics
+outer_microfolds,20
+test_microfolds,0|5|8
+validation_microfolds,3|10|13
+inner_folds,5
+outer_stratification,dataset_origin__stage1_target
+grouping_fsd50k,uploader_casefolded
+grouping_coughvid,uuid
+target_recording_ratios,train=0.70;validation=0.15;test=0.15
+new_fsd50k_positive_segmentation,full_clip
+stage2_usage,forbidden_for_new_fsd50k_coughs

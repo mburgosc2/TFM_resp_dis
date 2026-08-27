@@ -45,6 +45,18 @@ RANDOM_LR_RESULTS = (
 RANDOM_RF_RESULTS = (
     ROOT / "results_stage1_cough_no_cough" / "mfcc117_rf_compact_random" / "full"
 )
+FSD50K_COUGH_LR_RESULTS = (
+    ROOT
+    / "results_stage1_cough_no_cough"
+    / "mfcc117_lr_fsd50k_coughs_augmented_random"
+    / "full"
+)
+FSD50K_COUGH_LR_SEARCH_RESULTS = (
+    ROOT
+    / "results_stage1_cough_no_cough"
+    / "mfcc117_lr_fsd50k_coughs_search_random"
+    / "full"
+)
 
 
 def historical_metrics() -> tuple[dict[str, Any], pd.DataFrame, pd.DataFrame]:
@@ -616,6 +628,34 @@ def build_workbook() -> Path:
         "MFCC117 + RF compacto (splits random)",
         "Random Forest compacto",
     )
+    fsd50k_cough_lr = compact_metrics(
+        "S1-R04",
+        FSD50K_COUGH_LR_RESULTS,
+        "MFCC117 + LR fija + toses FSD50K revisadas",
+        "Logistic Regression",
+    )
+    fsd50k_cough_lr[0]["Datos/splits"] = (
+        "splits random agrupados; incorpora 172 toses FSD50K revisadas "
+        "manualmente y excluidas de Stage 2"
+    )
+    fsd50k_cough_lr[0]["Nota"] = (
+        "Configuracion LR congelada del experimento S1-R02; sin nueva busqueda "
+        "de hiperparametros ni umbral."
+    )
+    fsd50k_cough_lr_search = compact_metrics(
+        "S1-R05",
+        FSD50K_COUGH_LR_SEARCH_RESULTS,
+        "MFCC117 + LR optimizada + toses FSD50K revisadas",
+        "Logistic Regression",
+    )
+    fsd50k_cough_lr_search[0]["Datos/splits"] = (
+        "mismos splits agrupados de S1-R04; 172 toses FSD50K revisadas y "
+        "excluidas de Stage 2"
+    )
+    fsd50k_cough_lr_search[0]["Nota"] = (
+        "Busqueda OOF en dos fases; seleccion sensible al rendimiento dentro "
+        "de FSD50K y con TEST reservado."
+    )
 
     summary = pd.DataFrame(
         [
@@ -627,6 +667,8 @@ def build_workbook() -> Path:
             compact_rf[0],
             random_lr[0],
             random_rf[0],
+            fsd50k_cough_lr[0],
+            fsd50k_cough_lr_search[0],
         ]
     )
     preferred_columns = [
@@ -652,6 +694,8 @@ def build_workbook() -> Path:
             compact_rf[1],
             random_lr[1],
             random_rf[1],
+            fsd50k_cough_lr[1],
+            fsd50k_cough_lr_search[1],
         ],
         ignore_index=True,
         sort=False,
@@ -666,6 +710,8 @@ def build_workbook() -> Path:
             compact_rf[2],
             random_lr[2],
             random_rf[2],
+            fsd50k_cough_lr[2],
+            fsd50k_cough_lr_search[2],
         ],
         ignore_index=True,
         sort=False,
@@ -678,6 +724,8 @@ def build_workbook() -> Path:
             compact_rf[3],
             random_lr[3],
             random_rf[3],
+            fsd50k_cough_lr[3],
+            fsd50k_cough_lr_search[3],
         ],
         ignore_index=True,
         sort=False,
@@ -689,12 +737,21 @@ def build_workbook() -> Path:
             compact_rf[4],
             random_lr[4],
             random_rf[4],
+            fsd50k_cough_lr[4],
+            fsd50k_cough_lr_search[4],
         ],
         ignore_index=True,
         sort=False,
     )
     compact_candidates = pd.concat(
-        [compact_lr[5], compact_rf[5], random_lr[5], random_rf[5]],
+        [
+            compact_lr[5],
+            compact_rf[5],
+            random_lr[5],
+            random_rf[5],
+            fsd50k_cough_lr[5],
+            fsd50k_cough_lr_search[5],
+        ],
         ignore_index=True,
         sort=False,
     )

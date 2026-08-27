@@ -1,0 +1,36 @@
+parameter,value
+experiment,mfcc117_lr_fsd50k_coughs_search_random
+family,lr
+winner,lr__C0p1__l2__weight_none__fsdposw4
+selection_rule,"OOF-only constraints from fixed baseline; maximize FSD50K balanced accuracy, ties by new-cough recall and global macro-F1"
+feature_source,C:\Users\Usuario\Desktop\UNI MARINA\master\TFM\TFM_resp_dis\features_extracted_stage1_fsd50k_coughs_random\mfcc117
+split_protocol,random grouped by CoughVID UUID and FSD50K uploader
+n_phase_a_candidates,44
+n_phase_b_candidates,15
+threshold_grid,0.05..0.95 step 0.01
+baseline_candidate,lr__C0p3__l1__weight_none
+baseline_threshold,0.5
+macro_f1_floor,0.9453766863422659
+specificity_floor,0.9653218884120172
+original_cough_recall_floor,0.9517599596570852
+C,0.1
+penalty,l2
+class_weight,none
+new_fsd50k_cough_weight,4.0
+threshold,0.55
+threshold_selection,OOF TRAIN only; validation and test not used
+new_fsd50k_coughs_train,121
+new_fsd50k_coughs_validation,26
+stage2_use_of_new_fsd50k_coughs,False
+test_evaluated,False
+n_features,117
+normalization,StandardScaler inside each fold; final fitted on TRAIN
+fit_final_seconds,0.2177703999914229
+model_size_kb,4.9970703125
+trainable_parameters,118
+nonzero_coefficients,117
+deployment_float_values,352
+benchmark_samples,1000
+desktop_batch_ms_per_sample,0.0019047900006019822
+desktop_single_sample_ms,0.2255256000207737
+benchmark_note,desktop Python reference; not mobile latency

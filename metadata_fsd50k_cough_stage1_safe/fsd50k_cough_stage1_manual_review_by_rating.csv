@@ -1,0 +1,8 @@
+﻿cough_rating_group,manual_review_decision,recording_count
+missing,NO,30
+missing,SI,1
+positive_agreement_without_two_pp,NO,13
+positive_agreement_without_two_pp,SI,21
+pp_agreement,NO,24
+pp_agreement,SI,145
+single_positive,SI,5
