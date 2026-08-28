@@ -281,6 +281,9 @@ README.md
 
 # Features generados de cocleogramas
 features_extracted_multiclass_4c_cochleogram_experiment_random/
+# Todas las matrices y metadatos de features generados para Stage 2.
+# Los scripts ``feature_extraction_stage2_*.py`` permanecen versionados.
+/features_extracted_stage2*/
 features_extracted_stage2_dry_wet_cochleograms/
 features_extracted_stage2_dry_wet_cochleograms_raw/
 features_extracted_stage2_dry_wet_wavelet_scattering/

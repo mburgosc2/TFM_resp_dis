@@ -1,2 +1,0 @@
-﻿name,sample_rate,target_duration_seconds,n_mfcc,n_fft,win_length,hop_length,n_mels,fmin_hz,fmax_hz,delta_width,event_feature_count,frame_pooling,recording_pooling,recording_feature_count,segmentation_config,segmentation_method,test_processed
-mfcc117,16000,1.5,13,2048,2048,512,128,0.0,8000.0,9,117,mean|std|max,mean_std_max,351,top15_margin6_smooth30_gap500_min80_win1500,energy_hysteresis_bounded_merge_nonoverlap_v3,False

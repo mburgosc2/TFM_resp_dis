@@ -57,6 +57,12 @@ FSD50K_COUGH_LR_SEARCH_RESULTS = (
     / "mfcc117_lr_fsd50k_coughs_search_random"
     / "full"
 )
+WST_O01_RECORDING_LR_RESULTS = (
+    ROOT
+    / "results_stage1_cough_no_cough"
+    / "wst_o01_recording_enhanced_lr_fsd50k_coughs_random"
+    / "full"
+)
 
 
 def historical_metrics() -> tuple[dict[str, Any], pd.DataFrame, pd.DataFrame]:
@@ -595,6 +601,164 @@ def compact_metrics(
     return summary, metrics, folds, config, quality, candidates
 
 
+def wst_o01_recording_metrics() -> tuple[
+    dict[str, Any],
+    pd.DataFrame,
+    pd.DataFrame,
+    pd.DataFrame,
+    pd.DataFrame,
+]:
+    """Carga el experimento WST S0+S1 o informa su fase actual."""
+
+    experiment_id = "S1-W01"
+    metrics_path = WST_O01_RECORDING_LR_RESULTS / "metrics_summary.csv"
+    phase_a_path = (
+        WST_O01_RECORDING_LR_RESULTS / "phase_a_candidate_cv_results.csv"
+    )
+    phase_b_path = (
+        WST_O01_RECORDING_LR_RESULTS / "phase_b_candidate_cv_results.csv"
+    )
+    summary: dict[str, Any] = {
+        "ID": experiment_id,
+        "Estado": "Pendiente de ejecucion",
+        "Experimento": "WST S0+S1 recording mejorado + LR",
+        "Features": (
+            "95 paths S0+S1 por ventana; raw/log; weighted mean/std + max; "
+            "285/291/294 por grabacion"
+        ),
+        "Clasificador": "Logistic Regression",
+        "Datos/splits": (
+            "splits random agrupados con toses FSD50K revisadas; una fila "
+            "y etiqueta por original_uuid"
+        ),
+        "Umbral": "Seleccionado con OOF de TRAIN",
+        "Nota": (
+            "Compara raw/log-WST, amplitud, PCA, C, L1/L2 y class_weight. "
+            "Registra por separado recall de tos COUGHVID y de las nuevas "
+            "toses FSD50K para auditar el cambio de dominio."
+        ),
+        "Fuente": str(metrics_path),
+    }
+
+    if not metrics_path.is_file():
+        if phase_b_path.is_file():
+            summary["Estado"] = "En ejecucion (Fase B)"
+        elif phase_a_path.is_file():
+            summary["Estado"] = "En ejecucion (Fase A cerrada)"
+        empty = pd.DataFrame()
+        candidates = []
+        for phase, path in (("A", phase_a_path), ("B", phase_b_path)):
+            if not path.is_file():
+                continue
+            frame = pd.read_csv(path)
+            frame.insert(0, "search_phase", phase)
+            frame.insert(0, "ID", experiment_id)
+            candidates.append(frame)
+        candidate_frame = (
+            pd.concat(candidates, ignore_index=True, sort=False)
+            if candidates
+            else empty
+        )
+        return summary, empty, empty, empty, candidate_frame
+
+    metrics = pd.read_csv(metrics_path)
+    metrics.insert(0, "ID", experiment_id)
+    folds_path = WST_O01_RECORDING_LR_RESULTS / "best_cv_fold_metrics.csv"
+    folds = pd.read_csv(folds_path) if folds_path.is_file() else pd.DataFrame()
+    if not folds.empty:
+        folds.insert(0, "ID", experiment_id)
+    config_path = WST_O01_RECORDING_LR_RESULTS / "experiment_configuration.csv"
+    config = pd.read_csv(config_path) if config_path.is_file() else pd.DataFrame()
+    if not config.empty:
+        config.insert(0, "ID", experiment_id)
+
+    candidate_frames = []
+    for phase, path in (("A", phase_a_path), ("B", phase_b_path)):
+        if not path.is_file():
+            continue
+        frame = pd.read_csv(path)
+        frame.insert(0, "search_phase", phase)
+        frame.insert(0, "ID", experiment_id)
+        candidate_frames.append(frame)
+    candidates = (
+        pd.concat(candidate_frames, ignore_index=True, sort=False)
+        if candidate_frames
+        else pd.DataFrame()
+    )
+
+    summary["Estado"] = "Finalizado"
+    oof = metrics[metrics["dataset"].astype(str).eq("train_oof")]
+    validation = metrics[metrics["dataset"].astype(str).eq("validation")]
+    test = metrics[metrics["dataset"].astype(str).eq("test")]
+    if not oof.empty:
+        row = oof.iloc[0]
+        summary.update(
+            {
+                "Macro-F1 OOF": row.get("macro_f1", np.nan),
+                "Recall tos OOF": row.get("recall_cough", np.nan),
+                "Recall tos original OOF": row.get(
+                    "original_cough_recall", np.nan
+                ),
+                "Recall tos FSD50K OOF": row.get(
+                    "new_fsd50k_cough_recall", np.nan
+                ),
+            }
+        )
+    if not folds.empty and "f1_cough" in folds:
+        summary["F1 CV medio"] = folds["f1_cough"].mean()
+        summary["F1 CV std"] = folds["f1_cough"].std(ddof=0)
+    if not validation.empty:
+        row = validation.iloc[0]
+        summary.update(
+            {
+                "F1 validation": row.get("f1_cough", np.nan),
+                "Macro-F1 validation": row.get("macro_f1", np.nan),
+                "Recall tos validation": row.get("recall_cough", np.nan),
+                "Especificidad validation": row.get(
+                    "specificity_no_cough", np.nan
+                ),
+                "Precision tos validation": row.get(
+                    "precision_cough", np.nan
+                ),
+                "AUC validation": row.get("roc_auc", np.nan),
+                "Recall tos original validation": row.get(
+                    "original_cough_recall", np.nan
+                ),
+                "Recall tos FSD50K validation": row.get(
+                    "new_fsd50k_cough_recall", np.nan
+                ),
+            }
+        )
+    if not test.empty:
+        row = test.iloc[0]
+        summary.update(
+            {
+                "F1 test": row.get("f1_cough", np.nan),
+                "Macro-F1 test": row.get("macro_f1", np.nan),
+                "Recall tos test": row.get("recall_cough", np.nan),
+                "Especificidad test": row.get("specificity_no_cough", np.nan),
+                "Precision tos test": row.get("precision_cough", np.nan),
+                "AUC test": row.get("roc_auc", np.nan),
+                "Recall tos original test": row.get(
+                    "original_cough_recall", np.nan
+                ),
+                "Recall tos FSD50K test": row.get(
+                    "new_fsd50k_cough_recall", np.nan
+                ),
+            }
+        )
+    if not config.empty and {"parameter", "value"}.issubset(config.columns):
+        config_map = dict(zip(config["parameter"], config["value"]))
+        for source, destination in (
+            ("winner", "Configuracion ganadora"),
+            ("model_size_kb", "Tamano modelo KB"),
+            ("desktop_classifier_inference_ms", "Inferencia escritorio ms"),
+        ):
+            if source in config_map:
+                summary[destination] = config_map[source]
+    return summary, metrics, folds, config, candidates
+
+
 # Redefinicion intencionada: amplia el constructor original con los dos
 # experimentos de calidad sin alterar los CSV historicos.
 def build_workbook() -> Path:
@@ -656,6 +820,7 @@ def build_workbook() -> Path:
         "Busqueda OOF en dos fases; seleccion sensible al rendimiento dentro "
         "de FSD50K y con TEST reservado."
     )
+    wst_o01 = wst_o01_recording_metrics()
 
     summary = pd.DataFrame(
         [
@@ -669,15 +834,19 @@ def build_workbook() -> Path:
             random_rf[0],
             fsd50k_cough_lr[0],
             fsd50k_cough_lr_search[0],
+            wst_o01[0],
         ]
     )
     preferred_columns = [
         "ID", "Estado", "Experimento", "Features", "Clasificador", "Datos/splits",
         "Umbral", "F1 CV medio", "F1 CV std", "Macro-F1 OOF", "Recall tos OOF",
+        "Recall tos original OOF", "Recall tos FSD50K OOF",
         "F1 validation",
         "Macro-F1 validation", "Recall tos validation", "Especificidad validation",
         "Precision tos validation", "AUC validation", "F1 test", "Macro-F1 test",
+        "Recall tos original validation", "Recall tos FSD50K validation",
         "Recall tos test", "Especificidad test", "Precision tos test", "AUC test",
+        "Recall tos original test", "Recall tos FSD50K test",
         "Recall tos test good", "Recall tos test ok", "Recall tos test poor",
         "Configuracion ganadora", "Tamano modelo KB", "Inferencia escritorio ms",
         "Parametros entrenables", "Valores float despliegue", "Nodos arboles",
@@ -696,6 +865,7 @@ def build_workbook() -> Path:
             random_rf[1],
             fsd50k_cough_lr[1],
             fsd50k_cough_lr_search[1],
+            wst_o01[1],
         ],
         ignore_index=True,
         sort=False,
@@ -712,6 +882,7 @@ def build_workbook() -> Path:
             random_rf[2],
             fsd50k_cough_lr[2],
             fsd50k_cough_lr_search[2],
+            wst_o01[2],
         ],
         ignore_index=True,
         sort=False,
@@ -726,6 +897,7 @@ def build_workbook() -> Path:
             random_rf[3],
             fsd50k_cough_lr[3],
             fsd50k_cough_lr_search[3],
+            wst_o01[3],
         ],
         ignore_index=True,
         sort=False,
@@ -751,6 +923,7 @@ def build_workbook() -> Path:
             random_rf[5],
             fsd50k_cough_lr[5],
             fsd50k_cough_lr_search[5],
+            wst_o01[4],
         ],
         ignore_index=True,
         sort=False,
@@ -760,7 +933,7 @@ def build_workbook() -> Path:
             "Aspecto": [
                 "Objetivo", "Mapeo", "Comparabilidad", "Protocolo quality",
                 "TEST mixto", "Control de fuga", "Modelos compactos",
-                "Comparacion random", "Actualizacion",
+                "Comparacion random", "Cambio de dominio WST", "Actualizacion",
             ],
             "Descripcion": [
                 "Stage 1 detecta tos frente a no tos.",
@@ -782,6 +955,11 @@ def build_workbook() -> Path:
                 (
                     "S1-R02 y S1-R03 repiten LR y RF compacto sobre los splits random "
                     "actuales, sin forzar ninguna calidad de tos a TEST."
+                ),
+                (
+                    "S1-W01 informa recall de tos original y FSD50K por separado; "
+                    "el origen esta fuertemente correlacionado con la clase y la "
+                    "metrica global puede ocultar una mala generalizacion FSD50K."
                 ),
                 "Los entrenamientos actuales actualizan este Excel automaticamente.",
             ],

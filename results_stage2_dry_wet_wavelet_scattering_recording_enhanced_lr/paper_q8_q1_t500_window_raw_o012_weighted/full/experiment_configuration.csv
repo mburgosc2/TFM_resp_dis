@@ -1,0 +1,14 @@
+parameter,value
+experiment,stage2_wst_recording_enhanced_lr
+preset,paper_q8_q1_t500_window_raw_o012_weighted
+selection_data,TRAIN OOF only
+validation_role,single final evaluation
+test_policy,not read or processed
+pooling,weighted mean/std + unweighted max
+phase_a_representations,24
+phase_a_c_values,"[0.0003, 0.001, 0.003]"
+phase_b_c_values,"[1e-05, 3e-05, 0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1]"
+phase_b_pca_options,"[""none"", 32, 64, 128, 256]"
+selected_candidate,"{""representation_key"": ""s1_s2__raw__noamp"", ""c_value"": 0.0003, ""pca_components"": 128}"
+selected_representation,"{""key"": ""s1_s2__raw__noamp"", ""orders"": [1, 2], ""transform"": ""raw"", ""amplitude_columns"": []}"
+threshold_oof,0.5625249544128728

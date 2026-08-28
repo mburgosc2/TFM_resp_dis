@@ -278,6 +278,29 @@ EXPERIMENTS: list[dict[str, Any]] = [
         "note": "Ganador oficial por macro-F1 OOF: C=0,001/PCA64/gold1/wet-cost1,15. Validation macro-F1=0,5845 y recalls dry/wet=0,6754/0,5556: el augmentation no mejora W06. La alternativa con mayor balanced accuracy OOF es C=0,0003/PCA64/gold1/wet-cost1,3 (0,6579; recalls 0,7041/0,6117), pero no fue el ganador del protocolo.",
     },
     {
+        "id": "W14",
+        "name": "WST recording mejorado + PCA + LR",
+        "family": "Wavelet Scattering",
+        "unit": "Grabacion",
+        "representation": (
+            "S1+S2 raw; 1929 features: mean/std ponderadas por "
+            "window_weight y max entre eventos"
+        ),
+        "reduction": "StandardScaler + PCA128 dentro de cada fold",
+        "balance": "Pesos balanceados por clase a nivel de grabacion",
+        "classifier": "Regresion logistica (C=0,0003)",
+        "metrics": "results_stage2_dry_wet_wavelet_scattering_recording_enhanced_lr/paper_q8_q1_t500_window_raw_o012_weighted/full/metrics_summary.csv",
+        "folds": "results_stage2_dry_wet_wavelet_scattering_recording_enhanced_lr/paper_q8_q1_t500_window_raw_o012_weighted/full/best_cv_fold_metrics.csv",
+        "config": "results_stage2_dry_wet_wavelet_scattering_recording_enhanced_lr/paper_q8_q1_t500_window_raw_o012_weighted/full/experiment_configuration.csv",
+        "candidates": "results_stage2_dry_wet_wavelet_scattering_recording_enhanced_lr/paper_q8_q1_t500_window_raw_o012_weighted/full/phase_b_candidate_cv_results.csv",
+        "note": (
+            "Seleccion OOF entre ordenes, raw/log-WST, amplitud y PCA. "
+            "Gana S1+S2 raw sin amplitud con PCA128: macro-F1 OOF=0,6289, "
+            "pero validation baja a 0,5878 (recalls dry/wet=0,7351/0,4691); "
+            "no mejora la referencia W06."
+        ),
+    },
+    {
         "id": "F01",
         "name": "Late fusion WST-LR + cocleograma event",
         "family": "Fusión WST + cocleograma",
@@ -495,6 +518,23 @@ def model_size_value(
     return np.nan
 
 
+def configuration_series(configuration: pd.DataFrame) -> pd.Series | None:
+    """Normaliza configuraciones wide y parameter/value a una serie."""
+
+    if configuration.empty:
+        return None
+    if {"parameter", "value"}.issubset(configuration.columns):
+        return pd.Series(
+            dict(
+                zip(
+                    configuration["parameter"].astype(str),
+                    configuration["value"],
+                )
+            )
+        )
+    return configuration.iloc[0]
+
+
 def build_summary() -> pd.DataFrame:
     rows = []
     for spec in EXPERIMENTS:
@@ -517,8 +557,7 @@ def build_summary() -> pd.DataFrame:
         config_path = absolute(spec.get("config"))
         if config_path is not None and config_path.is_file():
             configuration = pd.read_csv(config_path)
-            if not configuration.empty:
-                configuration_row = configuration.iloc[0]
+            configuration_row = configuration_series(configuration)
 
         # Mientras W05 sigue ejecutándose, incorporar la fase 1 OOF ya cerrada.
         projection_path = absolute(spec.get("projection"))
@@ -674,7 +713,10 @@ def build_configurations() -> pd.DataFrame:
         config = pd.read_csv(path)
         if config.empty:
             continue
-        for parameter, parameter_value in config.iloc[0].items():
+        normalized = configuration_series(config)
+        if normalized is None:
+            continue
+        for parameter, parameter_value in normalized.items():
             rows.append(
                 {
                     "experiment_id": spec["id"],

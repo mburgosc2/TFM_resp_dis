@@ -1,0 +1,20 @@
+parameter,value
+experiment,wst_o01_recording_enhanced_lr_fsd50k_coughs_random
+feature_source,C:\Users\Usuario\Desktop\UNI MARINA\master\TFM\TFM_resp_dis\features_extracted_stage1_fsd50k_coughs_random\paper_q8_t500_window_raw_o01
+feature_preset,paper_q8_t500_window_raw_o01
+winner,s0_s1__log__peak_rms_crest__pcanone__C0p3__l1__weight_none
+representation,"{""key"": ""s0_s1__log__peak_rms_crest"", ""transform"": ""log"", ""amplitude_columns"": [""log10_peak"", ""log10_rms"", ""log10_crest_factor""]}"
+selection_rule,"OOF TRAIN macro-F1; ties balanced accuracy, AUC, size, C"
+threshold,0.49
+threshold_selection,OOF TRAIN only
+sample_unit,one recording / original_uuid
+pooling,weighted mean/std and unweighted max
+input_dimension,294
+model_dimension,294
+final_pca_explained_variance,
+fit_final_seconds,0.6650685999775305
+model_size_kb,9.9892578125
+desktop_classifier_inference_ms,0.16267950006294996
+wst_extraction_time_included_in_benchmark,False
+stage2_use_of_new_fsd50k_coughs,False
+test_evaluated,False
