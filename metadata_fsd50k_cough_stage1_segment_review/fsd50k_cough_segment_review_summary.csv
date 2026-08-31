@@ -1,0 +1,10 @@
+metric,value
+approved_source_recordings,172
+source_recordings_up_to_10s,138
+source_recordings_over_10s,34
+planned_segments,206
+manually_reviewed_segments,68
+included_cough_segments,190
+included_no_cough_segments,16
+excluded_ambiguous_segments,0
+source_recordings_trimmed_after_20s,12

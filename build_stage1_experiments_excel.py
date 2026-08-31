@@ -57,6 +57,12 @@ FSD50K_COUGH_LR_SEARCH_RESULTS = (
     / "mfcc117_lr_fsd50k_coughs_search_random"
     / "full"
 )
+FSD50K_COUGH_SEGMENT_LR_RESULTS = (
+    ROOT
+    / "results_stage1_cough_no_cough"
+    / "mfcc117_lr_fsd50k_cough_segments_random"
+    / "full"
+)
 WST_O01_RECORDING_LR_RESULTS = (
     ROOT
     / "results_stage1_cough_no_cough"
@@ -820,6 +826,20 @@ def build_workbook() -> Path:
         "Busqueda OOF en dos fases; seleccion sensible al rendimiento dentro "
         "de FSD50K y con TEST reservado."
     )
+    fsd50k_cough_segment_lr = compact_metrics(
+        "S1-R06",
+        FSD50K_COUGH_SEGMENT_LR_RESULTS,
+        "MFCC117 + LR fija + toses FSD50K segmentadas y reauditadas",
+        "Logistic Regression",
+    )
+    fsd50k_cough_segment_lr[0]["Datos/splits"] = (
+        "mismos splits y folds agrupados de S1-R04; clips FSD50K positivos "
+        "limitados a 20 s, segmentados en ventanas <=10 s y reauditados"
+    )
+    fsd50k_cough_segment_lr[0]["Nota"] = (
+        "Configuracion LR congelada de S1-R02. Los segmentos largos se "
+        "etiquetan individualmente como tos/no-tos; los ambiguos se excluyen."
+    )
     wst_o01 = wst_o01_recording_metrics()
 
     summary = pd.DataFrame(
@@ -834,6 +854,7 @@ def build_workbook() -> Path:
             random_rf[0],
             fsd50k_cough_lr[0],
             fsd50k_cough_lr_search[0],
+            fsd50k_cough_segment_lr[0],
             wst_o01[0],
         ]
     )
@@ -865,6 +886,7 @@ def build_workbook() -> Path:
             random_rf[1],
             fsd50k_cough_lr[1],
             fsd50k_cough_lr_search[1],
+            fsd50k_cough_segment_lr[1],
             wst_o01[1],
         ],
         ignore_index=True,
@@ -882,6 +904,7 @@ def build_workbook() -> Path:
             random_rf[2],
             fsd50k_cough_lr[2],
             fsd50k_cough_lr_search[2],
+            fsd50k_cough_segment_lr[2],
             wst_o01[2],
         ],
         ignore_index=True,
@@ -897,6 +920,7 @@ def build_workbook() -> Path:
             random_rf[3],
             fsd50k_cough_lr[3],
             fsd50k_cough_lr_search[3],
+            fsd50k_cough_segment_lr[3],
             wst_o01[3],
         ],
         ignore_index=True,
@@ -911,6 +935,7 @@ def build_workbook() -> Path:
             random_rf[4],
             fsd50k_cough_lr[4],
             fsd50k_cough_lr_search[4],
+            fsd50k_cough_segment_lr[4],
         ],
         ignore_index=True,
         sort=False,
@@ -923,6 +948,7 @@ def build_workbook() -> Path:
             random_rf[5],
             fsd50k_cough_lr[5],
             fsd50k_cough_lr_search[5],
+            fsd50k_cough_segment_lr[5],
             wst_o01[4],
         ],
         ignore_index=True,

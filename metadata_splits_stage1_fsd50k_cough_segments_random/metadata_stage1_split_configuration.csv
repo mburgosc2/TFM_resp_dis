@@ -1,0 +1,13 @@
+parameter,value
+experiment,stage1_fsd50k_cough_segments_random
+base_metadata_dir,C:\Users\Usuario\Desktop\UNI MARINA\master\TFM\TFM_resp_dis\metadata_splits_stage1_fsd50k_coughs_random
+split_assignment,preserved from base experiment
+fold_assignment,preserved from base experiment
+grouping,CoughVID UUID; FSD50K uploader
+short_cough_clip_policy,full clip when duration <=10s
+long_cough_clip_policy,two consecutive segments; max 10s each
+maximum_retained_source_time_seconds,20.0
+tail_after_20s,discarded
+long_segment_labels,manual SI/NO/AMBIGUO review
+ambiguous_policy,exclude
+stage2_use,forbidden for all new FSD50K cough-source segments

@@ -62,6 +62,10 @@ GRAPHS_DIR = (
     ROOT / "graphs_results_stage1_cough_no_cough" / EXPERIMENT_NAME / "full"
 )
 MODEL_PATH = RESULTS_DIR / "stage1_lr_fsd50k_coughs_augmented.joblib"
+FEATURE_EXTRACTION_COMMAND = (
+    "python .\\feature_extraction_stage1_mfcc_fsd50k_coughs.py "
+    "--action extract --near-silence-policy reject"
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -397,12 +401,12 @@ def train(overwrite: bool) -> None:
     print("TEST no sera leido ni evaluado durante esta accion.")
     print(
         f"TRAIN: {X_train.shape}; no_tos/tos={np.bincount(y_train).tolist()}; "
-        f"nuevas_toses_FSD50K={int(is_new_train.sum())}"
+        f"segmentos_tos_FSD50K={int(is_new_train.sum())}"
     )
     print(
         f"VALIDATION: {X_validation.shape}; "
         f"no_tos/tos={np.bincount(y_validation).tolist()}; "
-        f"nuevas_toses_FSD50K={int(is_new_validation.sum())}"
+        f"segmentos_tos_FSD50K={int(is_new_validation.sum())}"
     )
 
     oof_prediction = np.zeros(len(y_train), dtype=np.int8)
@@ -543,6 +547,14 @@ def train(overwrite: bool) -> None:
         "target_mapping": "0=no_cough; 1=cough",
         "new_fsd50k_coughs_train": int(is_new_train.sum()),
         "new_fsd50k_coughs_validation": int(is_new_validation.sum()),
+        "new_fsd50k_cough_recordings_train": int(
+            manifest_train.loc[is_new_train, "original_uuid"].astype(str).nunique()
+        ),
+        "new_fsd50k_cough_recordings_validation": int(
+            manifest_validation.loc[
+                is_new_validation, "original_uuid"
+            ].astype(str).nunique()
+        ),
         "stage2_use_of_new_fsd50k_coughs": False,
         "n_features": X_train.shape[1],
         "normalization": "StandardScaler inside each fold; final fitted on TRAIN",
@@ -641,6 +653,9 @@ def evaluate_test(overwrite: bool) -> None:
     config_map = dict(zip(configuration["parameter"], configuration["value"]))
     config_map["test_evaluated"] = True
     config_map["new_fsd50k_coughs_test"] = int(is_new_test.sum())
+    config_map["new_fsd50k_cough_recordings_test"] = int(
+        manifest_test.loc[is_new_test, "original_uuid"].astype(str).nunique()
+    )
     pd.DataFrame(config_map.items(), columns=["parameter", "value"]).to_csv(
         config_path, index=False
     )
@@ -668,8 +683,7 @@ def main() -> None:
     if not FEATURES_DIR.is_dir():
         raise FileNotFoundError(
             f"No existe {FEATURES_DIR}. Ejecuta primero:\n"
-            "python .\\feature_extraction_stage1_mfcc_fsd50k_coughs.py "
-            "--action extract --near-silence-policy reject"
+            f"{FEATURE_EXTRACTION_COMMAND}"
         )
     validate_feature_configuration()
     if args.action == "train":

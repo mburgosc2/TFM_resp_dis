@@ -37,6 +37,10 @@ from tqdm import tqdm
 ROOT = Path(__file__).resolve().parent
 METADATA_DIR = ROOT / "metadata_splits_stage1_fsd50k_coughs_random"
 OUTPUT_DIR = ROOT / "features_extracted_stage1_fsd50k_coughs_random" / "mfcc117"
+FEATURE_EXPERIMENT_NAME = "stage1_mfcc117_fsd50k_coughs_random"
+METADATA_PREPARATION_COMMAND = (
+    "python .\\splits_analysis_stage1_fsd50k_coughs.py --action write"
+)
 
 SAMPLE_RATE = 16_000
 N_MFCC = 13
@@ -55,6 +59,7 @@ REQUIRED_COLUMNS = {
     "end_time",
     "fold",
     "is_new_fsd50k_cough",
+    "is_fsd50k_cough_source_recording",
     "original_uuid",
     "record_source",
     "split",
@@ -86,6 +91,11 @@ MANIFEST_COLUMNS = (
     "end_time",
     "segment_duration",
     "segmentation_policy",
+    "segment_review_decision",
+    "segment_review_source",
+    "segment_review_notes",
+    "source_duration_before_segment_review",
+    "discarded_tail_seconds",
     "fold",
     "split",
 )
@@ -173,7 +183,7 @@ def load_and_validate_metadata() -> dict[str, pd.DataFrame]:
     if not METADATA_DIR.is_dir():
         raise FileNotFoundError(
             f"No existe {METADATA_DIR}. Ejecuta primero:\n"
-            "python .\\splits_analysis_stage1_fsd50k_coughs.py --action write"
+            f"{METADATA_PREPARATION_COMMAND}"
         )
 
     splits: dict[str, pd.DataFrame] = {}
@@ -587,7 +597,7 @@ def save_results(
     )
 
     configuration = {
-        "experiment": "stage1_mfcc117_fsd50k_coughs_random",
+        "experiment": FEATURE_EXPERIMENT_NAME,
         "metadata_dir": str(METADATA_DIR),
         "output_dir": str(OUTPUT_DIR),
         "sample_rate": SAMPLE_RATE,
