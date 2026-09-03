@@ -1,0 +1,4 @@
+cough_quality,n_cough_segments,n_cough_recordings,recall_cough,false_negative_rate,mean_probability_cough,median_probability_cough
+good,218,218,1.0,0.0,0.9844181404914357,0.9966420062301052
+ok,146,146,1.0,0.0,0.9837033374871781,0.996248100969691
+poor,39,39,1.0,0.0,0.9655109232354298,0.9957695373381978

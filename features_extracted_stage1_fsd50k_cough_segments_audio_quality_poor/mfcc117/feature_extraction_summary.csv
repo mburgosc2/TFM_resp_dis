@@ -1,0 +1,4 @@
+split,input_segments,extracted_segments,excluded_near_silence,error_count,no_cough_segments,cough_segments,new_fsd50k_cough_segments,poor_cough_segments
+train,7930,7925,5,0,5682,2243,158,0
+validation,1706,1705,1,0,1212,493,32,0
+test,1487,1486,1,0,1216,270,0,270

@@ -1,0 +1,13 @@
+parameter,value
+experiment,stage1_fsd50k_cough_segments_audio_quality_poor
+source_metadata_dir,C:\Users\Usuario\Desktop\UNI MARINA\master\TFM\TFM_resp_dis\metadata_splits_stage1_fsd50k_cough_segments_random
+output_metadata_dir,C:\Users\Usuario\Desktop\UNI MARINA\master\TFM\TFM_resp_dis\metadata_splits_stage1_fsd50k_cough_segments_audio_quality_poor
+random_state,42
+forced_test_positive_rule,stage1_target=1 AND dataset_origin=COUGHVID AND quality=poor
+test_positive_policy,only forced COUGHVID poor coughs
+fsd50k_positive_policy,quality not available; restricted to TRAIN or VALIDATION
+test_negative_target_fraction,0.15
+validation_target_fraction_complete_dataset,0.15
+grouping,CoughVID UUID; FSD50K uploader
+inner_folds,5
+hyperparameter_or_threshold_selection_with_test,False

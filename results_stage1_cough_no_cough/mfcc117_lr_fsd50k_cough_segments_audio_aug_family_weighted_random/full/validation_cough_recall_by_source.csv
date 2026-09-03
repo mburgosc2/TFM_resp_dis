@@ -1,0 +1,3 @@
+split,cough_source,n_cough_segments,n_cough_recordings,recall_cough,false_negative_rate,mean_probability_cough,median_probability_cough
+validation,original_cough,430,430,0.9930232558139535,0.0069767441860465115,0.9528422709822587,0.986758564257825
+validation,new_fsd50k_cough,33,26,0.3939393939393939,0.6060606060606061,0.41414948081375735,0.32778169510771715

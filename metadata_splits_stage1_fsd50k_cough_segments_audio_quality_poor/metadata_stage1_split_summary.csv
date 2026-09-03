@@ -1,0 +1,16 @@
+split,dataset_origin,stage1_target,quality,n_segments,n_recordings,n_groups
+test,COUGHVID,0,no_cough,11,11,11
+test,COUGHVID,1,poor,270,270,270
+test,FSD50K,0,no_cough,1206,1093,358
+train,COUGHVID,0,no_cough,52,52,52
+train,COUGHVID,1,good,1278,1278,1278
+train,COUGHVID,1,ok,807,807,807
+train,FSD50K,0,no_cough,5621,5243,1124
+train,FSD50K,0,not_available,14,14,10
+train,FSD50K,1,not_available,158,142,77
+validation,COUGHVID,0,no_cough,11,11,11
+validation,COUGHVID,1,good,298,298,298
+validation,COUGHVID,1,ok,163,163,163
+validation,FSD50K,0,no_cough,1200,1135,241
+validation,FSD50K,0,not_available,2,2,2
+validation,FSD50K,1,not_available,32,30,18

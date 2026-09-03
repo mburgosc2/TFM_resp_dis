@@ -1,0 +1,2 @@
+dataset,cough_quality,threshold,n_samples,n_no_cough,n_cough,accuracy,balanced_accuracy,precision_cough,recall_cough,specificity_no_cough,f1_cough,macro_f1,roc_auc,tn_no_cough_correct,fp_no_cough_as_cough,fn_cough_as_no_cough,tp_cough_correct
+test_poor_cough_vs_shared_no_cough,poor,0.5,1486,1216,270,0.9582772543741588,0.9500152290448343,0.8489932885906041,0.937037037037037,0.9629934210526315,0.8908450704225352,0.932527360502449,0.9911245126705653,1171,45,17,253

@@ -1,0 +1,20 @@
+parameter,value
+experiment,stage1_mfcc117_fsd50k_cough_segments_audio_quality_poor
+metadata_dir,C:\Users\Usuario\Desktop\UNI MARINA\master\TFM\TFM_resp_dis\metadata_splits_stage1_fsd50k_cough_segments_audio_quality_poor
+output_dir,C:\Users\Usuario\Desktop\UNI MARINA\master\TFM\TFM_resp_dis\features_extracted_stage1_fsd50k_cough_segments_audio_quality_poor\mfcc117
+sample_rate,16000
+mono,True
+n_mfcc,13
+coefficient_groups,"MFCC,delta,delta2"
+statistics,"mean,std,max"
+n_features,117
+silence_audit_threshold,0.0001
+near_silence_policy,reject
+normalization,none; fit scaler inside each training fold
+target_column,stage1_target
+path_column,audio_path
+test_usage,feature repartition only; no model selection or test metrics
+elapsed_seconds,241.47214359999634
+source_feature_dir,C:\Users\Usuario\Desktop\UNI MARINA\master\TFM\TFM_resp_dis\features_extracted_stage1_fsd50k_cough_segments_random\mfcc117
+feature_reuse,exact MFCC117 rows remapped by uuid_segmento; no recomputation
+split_protocol,COUGHVID poor coughs forced to TEST; grouped negatives held out

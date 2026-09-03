@@ -39,6 +39,12 @@ COMPACT_RF_RESULTS = (
     / "mfcc117_rf_compact_audio_quality_poor"
     / "full"
 )
+QUALITY_POOR_FINAL_LR_RESULTS = (
+    ROOT
+    / "results_stage1_cough_no_cough"
+    / "mfcc117_lr_fsd50k_cough_segments_audio_quality_poor"
+    / "full"
+)
 RANDOM_LR_RESULTS = (
     ROOT / "results_stage1_cough_no_cough" / "mfcc117_lr_random" / "full"
 )
@@ -61,6 +67,30 @@ FSD50K_COUGH_SEGMENT_LR_RESULTS = (
     ROOT
     / "results_stage1_cough_no_cough"
     / "mfcc117_lr_fsd50k_cough_segments_random"
+    / "full"
+)
+AUDIO_AUG_FULL_WEIGHT_RESULTS = (
+    ROOT
+    / "results_stage1_cough_no_cough"
+    / "mfcc117_lr_fsd50k_cough_segments_audio_aug_random"
+    / "full"
+)
+AUDIO_AUG_FAMILY_WEIGHTED_RESULTS = (
+    ROOT
+    / "results_stage1_cough_no_cough"
+    / "mfcc117_lr_fsd50k_cough_segments_audio_aug_family_weighted_random"
+    / "full"
+)
+AUDIO_AUG_NOISE_ONLY_RESULTS = (
+    ROOT
+    / "results_stage1_cough_no_cough"
+    / "mfcc117_lr_fsd50k_cough_segments_noise_aug_random"
+    / "full"
+)
+AUDIO_AUG_NOISE_FAMILY_WEIGHTED_RESULTS = (
+    ROOT
+    / "results_stage1_cough_no_cough"
+    / "mfcc117_lr_fsd50k_cough_segments_noise_aug_family_weighted_random"
     / "full"
 )
 WST_O01_RECORDING_LR_RESULTS = (
@@ -786,6 +816,21 @@ def build_workbook() -> Path:
         "MFCC117 + RF compacto (train mejor / test poor)",
         "Random Forest compacto",
     )
+    quality_poor_final_lr = compact_metrics(
+        "S1-Q04",
+        QUALITY_POOR_FINAL_LR_RESULTS,
+        "MFCC117 + LR final + FSD50K (TEST COUGHVID poor)",
+        "Logistic Regression",
+    )
+    quality_poor_final_lr[0]["Datos/splits"] = (
+        "dataset Stage 1 definitivo con toses FSD50K segmentadas y "
+        "reauditadas; todas las toses COUGHVID poor reservadas para TEST; "
+        "splits agrupados por UUID/uploader"
+    )
+    quality_poor_final_lr[0]["Nota"] = (
+        "Analisis secundario de robustez. TEST contiene como positivos solo "
+        "toses COUGHVID poor; configuracion LR y umbral congelados."
+    )
     random_lr = compact_metrics(
         "S1-R02",
         RANDOM_LR_RESULTS,
@@ -840,6 +885,62 @@ def build_workbook() -> Path:
         "Configuracion LR congelada de S1-R02. Los segmentos largos se "
         "etiquetan individualmente como tos/no-tos; los ambiguos se excluyen."
     )
+    audio_aug_full_weight = compact_metrics(
+        "S1-R07",
+        AUDIO_AUG_FULL_WEIGHT_RESULTS,
+        "MFCC117 + LR fija + augmentation de toses (peso completo)",
+        "Logistic Regression",
+    )
+    audio_aug_full_weight[0]["Datos/splits"] = (
+        "mismos splits y folds agrupados de S1-R06; dos variantes sinteticas "
+        "por tos solo dentro de TRAIN"
+    )
+    audio_aug_full_weight[0]["Nota"] = (
+        "Ablacion: original y cada variante positiva tienen peso 1. La "
+        "evaluacion OOF y validation contiene exclusivamente audios originales."
+    )
+    audio_aug_family_weighted = compact_metrics(
+        "S1-R08",
+        AUDIO_AUG_FAMILY_WEIGHTED_RESULTS,
+        "MFCC117 + LR fija + augmentation ponderada por familia",
+        "Logistic Regression",
+    )
+    audio_aug_family_weighted[0]["Datos/splits"] = (
+        "mismos splits y folds agrupados de S1-R06; dos variantes sinteticas "
+        "por tos solo dentro de TRAIN"
+    )
+    audio_aug_family_weighted[0]["Nota"] = (
+        "Pesos por familia positiva: original=0.50 y dos variantes=0.25 cada "
+        "una; negativos originales=1.00. Pesos aplicados al scaler y a la LR."
+    )
+    audio_aug_noise_only = compact_metrics(
+        "S1-R09",
+        AUDIO_AUG_NOISE_ONLY_RESULTS,
+        "MFCC117 + LR fija + augmentation solo con ruido",
+        "Logistic Regression",
+    )
+    audio_aug_noise_only[0]["Datos/splits"] = (
+        "mismos splits y folds agrupados de S1-R06; una variante por tos de "
+        "TRAIN elegida reproduciblemente entre 10 y 20 dB SNR"
+    )
+    audio_aug_noise_only[0]["Nota"] = (
+        "Ablacion con peso completo: elimina pitch shift y utiliza una sola "
+        "variante para evitar triplicar la clase positiva."
+    )
+    audio_aug_noise_family_weighted = compact_metrics(
+        "S1-R10",
+        AUDIO_AUG_NOISE_FAMILY_WEIGHTED_RESULTS,
+        "MFCC117 + LR fija + ruido ponderado por familia",
+        "Logistic Regression",
+    )
+    audio_aug_noise_family_weighted[0]["Datos/splits"] = (
+        "mismos datos y variantes de S1-R09; una variante ruidosa por tos "
+        "exclusivamente dentro de TRAIN"
+    )
+    audio_aug_noise_family_weighted[0]["Nota"] = (
+        "Pesos: negativo=1.00; tos original=0.50; variante ruidosa=0.50. "
+        "Aisla robustez al ruido sin duplicar el peso efectivo positivo."
+    )
     wst_o01 = wst_o01_recording_metrics()
 
     summary = pd.DataFrame(
@@ -850,11 +951,16 @@ def build_workbook() -> Path:
             quality_summary,
             compact_lr[0],
             compact_rf[0],
+            quality_poor_final_lr[0],
             random_lr[0],
             random_rf[0],
             fsd50k_cough_lr[0],
             fsd50k_cough_lr_search[0],
             fsd50k_cough_segment_lr[0],
+            audio_aug_full_weight[0],
+            audio_aug_family_weighted[0],
+            audio_aug_noise_only[0],
+            audio_aug_noise_family_weighted[0],
             wst_o01[0],
         ]
     )
@@ -882,11 +988,16 @@ def build_workbook() -> Path:
             quality_detail,
             compact_lr[1],
             compact_rf[1],
+            quality_poor_final_lr[1],
             random_lr[1],
             random_rf[1],
             fsd50k_cough_lr[1],
             fsd50k_cough_lr_search[1],
             fsd50k_cough_segment_lr[1],
+            audio_aug_full_weight[1],
+            audio_aug_family_weighted[1],
+            audio_aug_noise_only[1],
+            audio_aug_noise_family_weighted[1],
             wst_o01[1],
         ],
         ignore_index=True,
@@ -900,11 +1011,16 @@ def build_workbook() -> Path:
             quality_folds,
             compact_lr[2],
             compact_rf[2],
+            quality_poor_final_lr[2],
             random_lr[2],
             random_rf[2],
             fsd50k_cough_lr[2],
             fsd50k_cough_lr_search[2],
             fsd50k_cough_segment_lr[2],
+            audio_aug_full_weight[2],
+            audio_aug_family_weighted[2],
+            audio_aug_noise_only[2],
+            audio_aug_noise_family_weighted[2],
             wst_o01[2],
         ],
         ignore_index=True,
@@ -916,11 +1032,16 @@ def build_workbook() -> Path:
             quality_config,
             compact_lr[3],
             compact_rf[3],
+            quality_poor_final_lr[3],
             random_lr[3],
             random_rf[3],
             fsd50k_cough_lr[3],
             fsd50k_cough_lr_search[3],
             fsd50k_cough_segment_lr[3],
+            audio_aug_full_weight[3],
+            audio_aug_family_weighted[3],
+            audio_aug_noise_only[3],
+            audio_aug_noise_family_weighted[3],
             wst_o01[3],
         ],
         ignore_index=True,
@@ -931,11 +1052,16 @@ def build_workbook() -> Path:
             quality_by_level,
             compact_lr[4],
             compact_rf[4],
+            quality_poor_final_lr[4],
             random_lr[4],
             random_rf[4],
             fsd50k_cough_lr[4],
             fsd50k_cough_lr_search[4],
             fsd50k_cough_segment_lr[4],
+            audio_aug_full_weight[4],
+            audio_aug_family_weighted[4],
+            audio_aug_noise_only[4],
+            audio_aug_noise_family_weighted[4],
         ],
         ignore_index=True,
         sort=False,
@@ -944,11 +1070,16 @@ def build_workbook() -> Path:
         [
             compact_lr[5],
             compact_rf[5],
+            quality_poor_final_lr[5],
             random_lr[5],
             random_rf[5],
             fsd50k_cough_lr[5],
             fsd50k_cough_lr_search[5],
             fsd50k_cough_segment_lr[5],
+            audio_aug_full_weight[5],
+            audio_aug_family_weighted[5],
+            audio_aug_noise_only[5],
+            audio_aug_noise_family_weighted[5],
             wst_o01[4],
         ],
         ignore_index=True,
@@ -958,14 +1089,20 @@ def build_workbook() -> Path:
         {
             "Aspecto": [
                 "Objetivo", "Mapeo", "Comparabilidad", "Protocolo quality",
-                "TEST mixto", "Control de fuga", "Modelos compactos",
-                "Comparacion random", "Cambio de dominio WST", "Actualizacion",
+                "Protocolo quality definitivo", "TEST mixto", "Control de fuga", "Modelos compactos",
+                "Comparacion random", "Augmentation de toses",
+                "Cambio de dominio WST", "Actualizacion",
             ],
             "Descripcion": [
                 "Stage 1 detecta tos frente a no tos.",
                 "Clase 0=no_cough; dry, wet y unknown se consideran tos (clase 1).",
                 "Los historicos usan metadatos antiguos; S1-C01 y S1-Q01 usan el consenso actual.",
                 "S1-Q01 excluye de TRAIN y validation todas las toses de calidad poor.",
+                (
+                    "S1-Q04 repite la prueba con el dataset definitivo: incorpora "
+                    "las toses FSD50K segmentadas/reauditadas, reserva todas las "
+                    "COUGHVID poor y usa en TEST solo esas toses como positivos."
+                ),
                 (
                     "TEST contiene todas las poor y una muestra adicional de otras "
                     "calidades/no-tos; por eso se informa recall por calidad."
@@ -981,6 +1118,12 @@ def build_workbook() -> Path:
                 (
                     "S1-R02 y S1-R03 repiten LR y RF compacto sobre los splits random "
                     "actuales, sin forzar ninguna calidad de tos a TEST."
+                ),
+                (
+                    "S1-R07 mide el efecto de tratar cada variante como una muestra "
+                    "de peso completo; S1-R08 normaliza a 1 el peso familiar; "
+                    "S1-R09 conserva el peso completo pero utiliza solo ruido; "
+                    "S1-R10 normaliza el peso de cada familia ruido-original."
                 ),
                 (
                     "S1-W01 informa recall de tos original y FSD50K por separado; "

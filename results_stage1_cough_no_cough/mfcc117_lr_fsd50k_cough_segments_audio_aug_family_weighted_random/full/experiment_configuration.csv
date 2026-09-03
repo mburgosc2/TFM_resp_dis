@@ -1,0 +1,49 @@
+parameter,value
+experiment,mfcc117_lr_fsd50k_cough_segments_audio_aug_family_weighted_random
+family,lr
+winner,lr__C0p3__l1__weight_none
+selection_rule,"classifier, threshold and augmentation frozen; experiment isolates family-normalized sample weighting"
+original_feature_source,C:\Users\Usuario\Desktop\UNI MARINA\master\TFM\TFM_resp_dis\features_extracted_stage1_fsd50k_cough_segments_random\mfcc117
+augmented_feature_source,C:\Users\Usuario\Desktop\UNI MARINA\master\TFM\TFM_resp_dis\features_extracted_stage1_fsd50k_cough_segments_audio_aug_random\mfcc117
+target_mapping,0=no_cough; 1=cough
+augmentation_scope,TRAIN cough class only
+weight_policy,family_normalized
+no_cough_original_weight,1.0
+cough_original_weight,0.5
+cough_augmented_weight_each,0.25
+cough_family_total_weight,1.0
+sample_weight_applied_to,StandardScaler and LogisticRegression
+n_original_train,7718
+n_original_no_cough_train,5603
+n_original_cough_train,2115
+n_augmented_cough_train,4230
+n_physical_final_fit,11948
+effective_no_cough_weight_final,5603.0
+effective_cough_weight_final,2115.0
+effective_total_weight_final,7718.0
+variants_per_cough,2
+transformation_counts,"{'pitch_down': 1085, 'noise_high': 1060, 'noise_moderate': 1054, 'pitch_up': 1031}"
+oof_policy,original samples only; variants of held-out parents excluded
+validation_augmentation,False
+test_augmentation,False
+normalization,weighted StandardScaler fitted inside each fold
+threshold,0.5
+threshold_selection,fixed; no threshold tuning
+test_evaluated,False
+C,0.3
+penalty,l1
+solver,liblinear
+class_weight,
+max_iter,5000
+random_state,42
+fit_final_seconds,0.4098534999648109
+model_size_kb,4.9658203125
+trainable_parameters,118
+nonzero_coefficients,96
+deployment_float_values,352
+benchmark_samples,1000
+desktop_batch_ms_per_sample,0.001553946667506049
+desktop_single_sample_ms,0.17411820008419454
+new_fsd50k_coughs_train_original,132
+new_fsd50k_coughs_validation,33
+external_pilot_used_for_selection,False

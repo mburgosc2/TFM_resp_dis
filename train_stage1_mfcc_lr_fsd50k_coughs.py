@@ -66,6 +66,11 @@ FEATURE_EXTRACTION_COMMAND = (
     "python .\\feature_extraction_stage1_mfcc_fsd50k_coughs.py "
     "--action extract --near-silence-policy reject"
 )
+TRAIN_TITLE = "STAGE 1 - MFCC117 + LR FIJA + NUEVAS TOSES FSD50K"
+RESULT_TITLE = "RESULTADO STAGE 1 - LR + NUEVAS TOSES FSD50K"
+TEST_TITLE = "EVALUACION FINAL TEST - STAGE 1 LR + NUEVAS TOSES FSD50K"
+SPLIT_PROTOCOL = "random grouped by CoughVID UUID and FSD50K uploader"
+EXTRA_CONFIGURATION: dict[str, Any] = {}
 
 
 def parse_args() -> argparse.Namespace:
@@ -393,7 +398,7 @@ def train(overwrite: bool) -> None:
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
     GRAPHS_DIR.mkdir(parents=True, exist_ok=True)
     print("=" * 78)
-    print("STAGE 1 - MFCC117 + LR FIJA + NUEVAS TOSES FSD50K")
+    print(TRAIN_TITLE)
     print("=" * 78)
     print(f"Configuracion congelada: {MODEL_NAME}")
     print(f"Umbral fijo: {THRESHOLD}")
@@ -543,7 +548,8 @@ def train(overwrite: bool) -> None:
             "no hyperparameter selection in this experiment"
         ),
         "feature_source": str(FEATURES_DIR),
-        "split_protocol": "random grouped by CoughVID UUID and FSD50K uploader",
+        "split_protocol": SPLIT_PROTOCOL,
+        **EXTRA_CONFIGURATION,
         "target_mapping": "0=no_cough; 1=cough",
         "new_fsd50k_coughs_train": int(is_new_train.sum()),
         "new_fsd50k_coughs_validation": int(is_new_validation.sum()),
@@ -573,7 +579,7 @@ def train(overwrite: bool) -> None:
     )
 
     print("\n" + "=" * 78)
-    print("RESULTADO STAGE 1 - LR + NUEVAS TOSES FSD50K")
+    print(RESULT_TITLE)
     print("=" * 78)
     print(f"Configuracion fija: {MODEL_NAME}")
     print(f"Modelo: {model_size_kb:.2f} KB")
@@ -661,7 +667,7 @@ def evaluate_test(overwrite: bool) -> None:
     )
 
     print("=" * 78)
-    print("EVALUACION FINAL TEST - STAGE 1 LR + NUEVAS TOSES FSD50K")
+    print(TEST_TITLE)
     print("=" * 78)
     print(
         f"TEST: F1 tos={test_metrics['f1_cough']:.4f} | "

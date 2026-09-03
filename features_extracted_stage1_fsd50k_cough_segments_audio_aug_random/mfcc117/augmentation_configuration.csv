@@ -1,0 +1,25 @@
+parameter,value
+experiment,stage1_mfcc117_cough_audio_augmentation
+source_features,C:\Users\Usuario\Desktop\UNI MARINA\master\TFM\TFM_resp_dis\features_extracted_stage1_fsd50k_cough_segments_random\mfcc117
+scope,TRAIN cough class only
+validation_augmented,False
+test_augmented,False
+n_original_train,7718
+n_original_cough_train,2115
+n_original_no_cough_train,5603
+n_variants_per_cough,2
+n_augmented_cough_train,4230
+candidate_transformations,"noise_high,noise_moderate,pitch_up,pitch_down"
+selection,two distinct transformations per parent; deterministic random
+random_state,42
+noise_source,real negative TRAIN segment from same fold as parent
+noise_high_snr_db,10.0
+noise_moderate_snr_db,20.0
+pitch_shift_semitones,1.5
+clipping_policy,scale whole augmented waveform to peak 0.999 if needed
+sample_rate,16000
+n_mfcc,13
+features,"MFCC,delta,delta2 pooled by mean,std,max"
+n_features,117
+fold_policy,variant and noise donor inherit/match parent fold
+elapsed_seconds,187.4485080000013

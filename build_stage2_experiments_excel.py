@@ -301,6 +301,26 @@ EXPERIMENTS: list[dict[str, Any]] = [
         ),
     },
     {
+        "id": "W15",
+        "name": "WST recording + LR: busqueda en dos fases",
+        "family": "Wavelet Scattering",
+        "unit": "Grabacion",
+        "representation": "1932: mean+std+max de 644 caminos WST",
+        "reduction": "StandardScaler + PCA; seleccion OOF en dos fases",
+        "balance": "Multiplicador gold y coste wet seleccionados por OOF",
+        "classifier": "Regresion logistica",
+        "metrics": "results_stage2_dry_wet_wst_recording_lr_two_phase_search/paper_q8_q1_t500_full/full/metrics_summary.csv",
+        "folds": "results_stage2_dry_wet_wst_recording_lr_two_phase_search/paper_q8_q1_t500_full/full/best_cv_fold_metrics.csv",
+        "config": "results_stage2_dry_wet_wst_recording_lr_two_phase_search/paper_q8_q1_t500_full/full/experiment_configuration.csv",
+        "candidates": "results_stage2_dry_wet_wst_recording_lr_two_phase_search/paper_q8_q1_t500_full/full/phase_b_candidate_cv_results.csv",
+        "note": (
+            "Fase A selecciona C/PCA/whitening y fase B prueba pesos gold/wet. "
+            "El ganador conserva pesos neutros: C=0,001, PCA128 sin whitening. "
+            "Validation macro-F1=0,6257; en la evaluacion final de TEST obtiene "
+            "macro-F1=0,5942, recalls dry/wet=0,7425/0,4750 y AUC=0,6999."
+        ),
+    },
+    {
         "id": "F01",
         "name": "Late fusion WST-LR + cocleograma event",
         "family": "Fusión WST + cocleograma",
