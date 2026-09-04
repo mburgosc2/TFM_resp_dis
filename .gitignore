@@ -315,3 +315,7 @@ auditory_stage1_fsd50k_cough_segment_review/
 
 # Audios locales generados por las auditorias de Stage 2
 metadata_audio_events_stage2_dry_wet/parameter_audit/**/audio/
+
+\results*
+\graphs_results*
+\~$tfm*

@@ -1,0 +1,2 @@
+feature,n_dry,n_wet,dry_mean,wet_mean,dry_median,wet_median,mean_difference_wet_minus_dry,median_difference_wet_minus_dry,auc,auc_separation,cliffs_delta,abs_cliffs_delta,direction
+mean_raw_s2_across_549_paths,1247,376,1.2047503298605724e-05,1.426153093732428e-05,9.906060522643659e-06,1.2134988979473337e-05,2.2140276387185567e-06,2.228928456829678e-06,0.586872323363306,0.08687232336330597,0.17374464672661194,0.17374464672661194,wet_higher

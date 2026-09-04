@@ -438,6 +438,25 @@ METRIC_COLUMNS = [
 ]
 
 
+WST_TEMPORAL_ABLATIONS = [
+    (
+        "T=8000 (500 ms)",
+        "results_stage2_dry_wet_wst_temporal_statistics_lr/"
+        "paper_q8_q1_t500_full/full/temporal_statistics_comparison.csv",
+    ),
+    (
+        "T=4000 (250 ms)",
+        "results_stage2_dry_wet_wst_temporal_statistics_lr/"
+        "paper_q8_q1_t250_j13_full/full/temporal_statistics_comparison.csv",
+    ),
+]
+
+WST_ORDER_ABLATION = (
+    "results_stage2_dry_wet_wst_order_ablation_lr/"
+    "paper_q8_q1_t500_full/full/order_ablation_comparison.csv"
+)
+
+
 def absolute(relative: str | None) -> Path | None:
     if not relative:
         return None
@@ -799,6 +818,127 @@ def build_notes() -> pd.DataFrame:
     )
 
 
+def build_wst_ablations() -> pd.DataFrame:
+    """Resume las ablaciones WST sin mezclarlas con el ranking principal."""
+
+    rows: list[dict[str, Any]] = []
+
+    for temporal_label, relative_path in WST_TEMPORAL_ABLATIONS:
+        path = absolute(relative_path)
+        if path is None or not path.is_file():
+            continue
+        data = pd.read_csv(path)
+        for _, result in data.iterrows():
+            statistics = str(result["temporal_statistics"]).replace("|", "+")
+            rows.append(
+                {
+                    "Estudio": "T y estadisticas temporales",
+                    "Configuracion": f"{temporal_label}; {statistics}",
+                    "T muestras": int(result["T_samples"]),
+                    "T ms": float(result["T_seconds"]) * 1000.0,
+                    "Ordenes WST": "S0+S1+S2",
+                    "Estadisticas intraevento": statistics,
+                    "Pooling entre eventos": "mean+std+max",
+                    "Paths": int(result["path_count"]),
+                    "Features por grabacion": int(
+                        result["recording_feature_count"]
+                    ),
+                    "PCA": int(result["pca_components"]),
+                    "C LR": float(result["C"]),
+                    "Umbral OOF": float(result["threshold_oof"]),
+                    "Macro-F1 OOF": float(result["oof__macro_f1"]),
+                    "Balanced acc OOF": float(
+                        result["oof__balanced_accuracy"]
+                    ),
+                    "Recall wet OOF": float(result["oof__wet_recall"]),
+                    "AUC OOF": float(result["oof__roc_auc"]),
+                    "Macro-F1 validation": float(
+                        result["validation__macro_f1"]
+                    ),
+                    "Balanced acc validation": float(
+                        result["validation__balanced_accuracy"]
+                    ),
+                    "Recall dry validation": float(
+                        result["validation__dry_recall"]
+                    ),
+                    "Recall wet validation": float(
+                        result["validation__wet_recall"]
+                    ),
+                    "AUC validation": float(result["validation__roc_auc"]),
+                    "Fuente": str(path.relative_to(SCRIPT_DIR)),
+                }
+            )
+
+    order_path = absolute(WST_ORDER_ABLATION)
+    if order_path is not None and order_path.is_file():
+        data = pd.read_csv(order_path)
+        order_labels = {
+            "s1": "S1",
+            "s2": "S2",
+            "s1_s2": "S1+S2",
+            "s0_s1_s2": "S0+S1+S2",
+        }
+        for _, result in data.iterrows():
+            representation = str(result["order_representation"])
+            orders = order_labels.get(representation, representation)
+            rows.append(
+                {
+                    "Estudio": "Ordenes de scattering",
+                    "Configuracion": orders,
+                    "T muestras": int(result["T_samples"]),
+                    "T ms": float(result["T_samples"]) / 16.0,
+                    "Ordenes WST": orders,
+                    "Estadisticas intraevento": str(
+                        result["within_event_temporal_pooling"]
+                    ),
+                    "Pooling entre eventos": str(
+                        result["between_event_pooling"]
+                    ).replace("|", "+"),
+                    "Paths": int(result["path_count"]),
+                    "Features por grabacion": int(
+                        result["recording_feature_count"]
+                    ),
+                    "PCA": int(result["pca_components"]),
+                    "C LR": float(result["C"]),
+                    "Umbral OOF": float(result["threshold_oof"]),
+                    "Macro-F1 OOF": float(result["oof__macro_f1"]),
+                    "Balanced acc OOF": float(
+                        result["oof__balanced_accuracy"]
+                    ),
+                    "Recall wet OOF": float(result["oof__wet_recall"]),
+                    "AUC OOF": float(result["oof__roc_auc"]),
+                    "Macro-F1 validation": float(
+                        result["validation__macro_f1"]
+                    ),
+                    "Balanced acc validation": float(
+                        result["validation__balanced_accuracy"]
+                    ),
+                    "Recall dry validation": float(
+                        result["validation__dry_recall"]
+                    ),
+                    "Recall wet validation": float(
+                        result["validation__wet_recall"]
+                    ),
+                    "AUC validation": float(result["validation__roc_auc"]),
+                    "Fuente": str(order_path.relative_to(SCRIPT_DIR)),
+                }
+            )
+
+    ablations = pd.DataFrame(rows)
+    if ablations.empty:
+        return ablations
+
+    best_oof = ablations.groupby("Estudio")["Macro-F1 OOF"].transform("max")
+    ablations.insert(
+        2,
+        "Ganador segun OOF",
+        np.isclose(ablations["Macro-F1 OOF"], best_oof),
+    )
+    return ablations.sort_values(
+        ["Estudio", "Macro-F1 OOF"], ascending=[True, False]
+    ).reset_index(drop=True)
+
+
 def projection_sheet() -> pd.DataFrame:
     spec = next(item for item in EXPERIMENTS if item["id"] == "W05")
     path = absolute(spec.get("projection"))
@@ -959,6 +1099,7 @@ def main() -> None:
     ranking = build_ranking(summary)
     notes = build_notes()
     pca_current = projection_sheet()
+    wst_ablations = build_wst_ablations()
 
     with pd.ExcelWriter(OUTPUT_PATH, engine="openpyxl") as writer:
         add_dataframe_sheet(writer, "Resumen", summary)
@@ -967,6 +1108,7 @@ def main() -> None:
         add_dataframe_sheet(writer, "CV_por_fold", folds)
         add_dataframe_sheet(writer, "Candidatos_OOF", candidates)
         add_dataframe_sheet(writer, "PCA_RF_actual", pca_current)
+        add_dataframe_sheet(writer, "Ablaciones_WST", wst_ablations)
         add_dataframe_sheet(writer, "Configuraciones", configurations)
         add_dataframe_sheet(writer, "Notas_y_protocolo", notes)
     style_workbook(OUTPUT_PATH)
@@ -978,6 +1120,7 @@ def main() -> None:
     print(f"Experimentos en ejecucion: {running}")
     print(f"Filas de metricas detalladas: {len(detail)}")
     print(f"Filas de candidatos OOF: {len(candidates)}")
+    print(f"Filas de ablaciones WST: {len(wst_ablations)}")
 
 
 if __name__ == "__main__":
