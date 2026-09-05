@@ -235,6 +235,14 @@ def build_stage1_internal() -> pd.DataFrame:
         coughvid_recall, fsd50k_recall = source_recalls(spec.get("source_recalls"))
         if spec.get("coughvid_is_total_recall", False):
             coughvid_recall = float(test["recall_cough"])
+        validation_source_path = metrics_path.with_name(
+            "validation_cough_recall_by_source.csv"
+        )
+        validation_coughvid_recall, validation_fsd50k_recall = source_recalls(
+            validation_source_path
+        )
+        if not validation_source_path.is_file():
+            validation_coughvid_recall = float(validation["recall_cough"])
 
         rows.append(
             {
@@ -267,6 +275,10 @@ def build_stage1_internal() -> pd.DataFrame:
                 "F1 tos VALIDATION": float(validation["f1_cough"]),
                 "Macro-F1 VALIDATION": float(validation["macro_f1"]),
                 "ROC-AUC VALIDATION": float(validation["roc_auc"]),
+                "Recall toses CoughVID VALIDATION": (
+                    validation_coughvid_recall
+                ),
+                "Recall toses FSD50K VALIDATION": validation_fsd50k_recall,
                 "TN VALIDATION": int(validation["tn_no_cough_correct"]),
                 "FP VALIDATION": int(
                     validation["fp_no_cough_as_cough"]
@@ -310,6 +322,39 @@ def external_metric_mapping(path: Path) -> dict[str, float]:
     }
 
 
+def external_cohort_signature(path: Path) -> tuple[tuple[str, ...], ...]:
+    """Identifica la cohorte externa sin depender de las predicciones."""
+
+    if not path.is_file():
+        raise FileNotFoundError(path)
+    data = pd.read_csv(path, dtype=str).fillna("")
+    columns = [
+        "sample_id",
+        "subject_id",
+        "true_label",
+        "sound_type",
+        "device",
+        "declared_file_name",
+    ]
+    missing = set(columns) - set(data.columns)
+    if missing:
+        raise ValueError(
+            f"Faltan columnas en {path}: {', '.join(sorted(missing))}"
+        )
+    if data["sample_id"].duplicated().any():
+        duplicates = sorted(
+            data.loc[data["sample_id"].duplicated(), "sample_id"].unique()
+        )
+        raise ValueError(
+            f"Hay sample_id duplicados en {path}: {duplicates[:10]}"
+        )
+    ordered = data.sort_values("sample_id", kind="stable")
+    return tuple(
+        tuple(str(value) for value in row)
+        for row in ordered[columns].itertuples(index=False, name=None)
+    )
+
+
 def build_stage1_validation(stage1_internal: pd.DataFrame) -> pd.DataFrame:
     """Tabla compacta dedicada exclusivamente a VALIDATION de Stage 1."""
 
@@ -349,6 +394,8 @@ def build_stage1_validation(stage1_internal: pd.DataFrame) -> pd.DataFrame:
         "F1 tos VALIDATION",
         "Macro-F1 VALIDATION",
         "ROC-AUC VALIDATION",
+        "Recall toses CoughVID VALIDATION",
+        "Recall toses FSD50K VALIDATION",
         "TN VALIDATION",
         "FP VALIDATION",
         "FN VALIDATION",
@@ -370,17 +417,41 @@ def build_stage1_validation(stage1_internal: pd.DataFrame) -> pd.DataFrame:
 def build_stage1_external() -> pd.DataFrame:
     rows: list[dict[str, Any]] = []
     base = DEMO_ROOT / "results_external_validation"
+    reference_signature: tuple[tuple[str, ...], ...] | None = None
+    reference_name = ""
     for spec in EXTERNAL_SPECS:
-        path = base / spec["directory"] / "external_validation_metrics.csv"
+        result_dir = base / spec["directory"]
+        path = result_dir / "external_validation_metrics.csv"
+        predictions_path = result_dir / "external_validation_predictions.csv"
+        configuration_path = result_dir / "external_validation_configuration.csv"
         m = external_metric_mapping(path)
+        signature = external_cohort_signature(predictions_path)
+        if int(m["n_samples"]) != len(signature):
+            raise ValueError(
+                f"{spec['name']}: las metricas indican {int(m['n_samples'])} "
+                f"muestras, pero hay {len(signature)} predicciones."
+            )
+        if reference_signature is None:
+            reference_signature = signature
+            reference_name = str(spec["name"])
+        elif signature != reference_signature:
+            raise ValueError(
+                "Las evaluaciones externas no contienen exactamente la misma "
+                f"cohorte: {reference_name!r} y {spec['name']!r}. Ejecuta de "
+                "nuevo los tres modelos con el mismo CSV de metadatos."
+            )
+        configuration = read_parameter_value(configuration_path)
         rows.append(
             {
                 "ID": spec["id"],
                 "Modelo": spec["name"],
                 "Protocolo": (
-                    "Validación piloto externa; mismas 58 muestras; "
-                    "sin ajuste de modelo ni umbral"
+                    "Evaluacion externa exploratoria post hoc; mismas "
+                    f"{int(m['n_samples'])} muestras; sin ajuste de modelo "
+                    "ni umbral"
                 ),
+                "Fecha evaluacion UTC": configuration.get("created_utc", ""),
+                "SHA-256 metadatos": configuration.get("metadata_sha256", ""),
                 "Umbral": 0.5,
                 "N": int(m["n_samples"]),
                 "No tos": int(m["n_no_cough"]),
@@ -635,7 +706,10 @@ def build_takeaways() -> pd.DataFrame:
     )
 
 
-def build_metric_notes() -> pd.DataFrame:
+def build_metric_notes(external_n: int | None = None) -> pd.DataFrame:
+    external_sample_text = (
+        f"{external_n} muestras" if external_n is not None else "una muestra reducida"
+    )
     return pd.DataFrame(
         [
             (
@@ -672,7 +746,9 @@ def build_metric_notes() -> pd.DataFrame:
             ),
             (
                 "Validación externa",
-                "Piloto con 58 muestras recopiladas; no debe presentarse como estimación clínica ni usarse para reajustar el modelo retrospectivamente.",
+                f"Evaluacion exploratoria con {external_sample_text}; no debe "
+                "presentarse como estimacion clinica ni usarse para reajustar "
+                "el modelo retrospectivamente.",
             ),
         ],
         columns=["Concepto", "Interpretación"],
@@ -780,7 +856,12 @@ def main() -> None:
     stage2_validation = build_stage2_validation()
     stage2_test = build_stage2_test()
     takeaways = build_takeaways()
-    metric_notes = build_metric_notes()
+    external_sizes = stage1_external["N"].dropna().astype(int).unique()
+    if len(external_sizes) != 1:
+        raise ValueError(
+            "Las tres evaluaciones externas no tienen el mismo numero de muestras."
+        )
+    metric_notes = build_metric_notes(int(external_sizes[0]))
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     csv_tables = {
