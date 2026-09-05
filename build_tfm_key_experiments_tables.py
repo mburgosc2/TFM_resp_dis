@@ -248,6 +248,33 @@ def build_stage1_internal() -> pd.DataFrame:
                     "winner", "lr__C0p3__l1__weight_none"
                 ),
                 "Umbral": float(test["threshold"]),
+                "N VALIDATION": int(validation["n_samples"]),
+                "No tos VALIDATION": int(validation["n_no_cough"]),
+                "Tos VALIDATION": int(validation["n_cough"]),
+                "Accuracy VALIDATION": float(validation["accuracy"]),
+                "Balanced accuracy VALIDATION": float(
+                    validation["balanced_accuracy"]
+                ),
+                "Sensibilidad / recall tos VALIDATION": float(
+                    validation["recall_cough"]
+                ),
+                "Especificidad / recall no tos VALIDATION": float(
+                    validation["specificity_no_cough"]
+                ),
+                "Precision tos VALIDATION": float(
+                    validation["precision_cough"]
+                ),
+                "F1 tos VALIDATION": float(validation["f1_cough"]),
+                "Macro-F1 VALIDATION": float(validation["macro_f1"]),
+                "ROC-AUC VALIDATION": float(validation["roc_auc"]),
+                "TN VALIDATION": int(validation["tn_no_cough_correct"]),
+                "FP VALIDATION": int(
+                    validation["fp_no_cough_as_cough"]
+                ),
+                "FN VALIDATION": int(
+                    validation["fn_cough_as_no_cough"]
+                ),
+                "TP VALIDATION": int(validation["tp_cough_correct"]),
                 "N TEST": int(test["n_samples"]),
                 "No tos TEST": int(test["n_no_cough"]),
                 "Tos TEST": int(test["n_cough"]),
@@ -266,7 +293,6 @@ def build_stage1_internal() -> pd.DataFrame:
                 "FP TEST": int(test["fp_no_cough_as_cough"]),
                 "FN TEST": int(test["fn_cough_as_no_cough"]),
                 "Macro-F1 OOF": float(oof["macro_f1"]),
-                "Macro-F1 VALIDATION": float(validation["macro_f1"]),
                 "Modelo KB": float(configuration.get("model_size_kb", np.nan)),
                 "Fuente": str(metrics_path.relative_to(ROOT)),
             }
@@ -282,6 +308,63 @@ def external_metric_mapping(path: Path) -> dict[str, float]:
         str(metric): float(value)
         for metric, value in zip(data["metric"], data["value"])
     }
+
+
+def build_stage1_validation(stage1_internal: pd.DataFrame) -> pd.DataFrame:
+    """Tabla compacta dedicada exclusivamente a VALIDATION de Stage 1."""
+
+    target_configuration_column = "Configuraci\u00f3n LR"
+    if target_configuration_column not in stage1_internal.columns:
+        candidates = [
+            column
+            for column in stage1_internal.columns
+            if column.startswith("Configuraci") and column.endswith(" LR")
+        ]
+        if len(candidates) != 1:
+            raise ValueError(
+                "No se pudo identificar de forma unica la columna de "
+                "configuracion LR."
+            )
+        stage1_internal = stage1_internal.rename(
+            columns={candidates[0]: target_configuration_column}
+        )
+
+    columns = [
+        "ID",
+        "Experimento",
+        "Datos positivos",
+        "Augmentation en TRAIN",
+        "Protocolo",
+        "Grupo de comparabilidad",
+        "ConfiguraciÃ³n LR",
+        "Umbral",
+        "N VALIDATION",
+        "No tos VALIDATION",
+        "Tos VALIDATION",
+        "Accuracy VALIDATION",
+        "Balanced accuracy VALIDATION",
+        "Sensibilidad / recall tos VALIDATION",
+        "Especificidad / recall no tos VALIDATION",
+        "Precision tos VALIDATION",
+        "F1 tos VALIDATION",
+        "Macro-F1 VALIDATION",
+        "ROC-AUC VALIDATION",
+        "TN VALIDATION",
+        "FP VALIDATION",
+        "FN VALIDATION",
+        "TP VALIDATION",
+        "Macro-F1 OOF",
+        "Modelo KB",
+        "Fuente",
+    ]
+    columns[6] = target_configuration_column
+    missing = set(columns) - set(stage1_internal.columns)
+    if missing:
+        raise ValueError(
+            "Faltan columnas para la tabla Stage 1 VALIDATION: "
+            + ", ".join(sorted(missing))
+        )
+    return stage1_internal[columns].copy()
 
 
 def build_stage1_external() -> pd.DataFrame:
@@ -692,6 +775,7 @@ def style_workbook(path: Path) -> None:
 
 def main() -> None:
     stage1_internal = build_stage1_internal()
+    stage1_validation = build_stage1_validation(stage1_internal)
     stage1_external = build_stage1_external()
     stage2_validation = build_stage2_validation()
     stage2_test = build_stage2_test()
@@ -701,6 +785,7 @@ def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     csv_tables = {
         "stage1_internal_key_results.csv": stage1_internal,
+        "stage1_validation_key_results.csv": stage1_validation,
         "stage1_external_pilot_results.csv": stage1_external,
         "stage2_validation_key_results.csv": stage2_validation,
         "stage2_final_test_result.csv": stage2_test,
@@ -714,6 +799,7 @@ def main() -> None:
         with pd.ExcelWriter(path, engine="openpyxl") as writer:
             add_sheet(writer, "Lectura_rapida", takeaways)
             add_sheet(writer, "Stage1_TEST_interno", stage1_internal)
+            add_sheet(writer, "Stage1_VALIDATION", stage1_validation)
             add_sheet(writer, "Stage1_externo", stage1_external)
             add_sheet(writer, "Stage2_VALIDATION", stage2_validation)
             add_sheet(writer, "Stage2_TEST_final", stage2_test)
@@ -735,6 +821,7 @@ def main() -> None:
     print(f"Excel guardado: {output_xlsx}")
     print(f"CSV guardados: {OUTPUT_DIR}")
     print(f"Stage 1 interno: {len(stage1_internal)} experimentos")
+    print(f"Stage 1 validation: {len(stage1_validation)} experimentos")
     print(f"Stage 1 externo: {len(stage1_external)} modelos")
     print(f"Stage 2 validation: {len(stage2_validation)} experimentos clave")
     print(f"Stage 2 test: {len(stage2_test)} modelo final")
