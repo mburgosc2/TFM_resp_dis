@@ -1,0 +1,2 @@
+dataset,n_samples,n_cough,n_no_cough,cough_prevalence,decision_threshold,precision_at_threshold,recall_at_threshold,average_precision,brier_score,baseline_brier_score,calibration_bins,calibration_strategy
+test,1689,428,1261,0.2534043812907046,0.5,0.9353348729792148,0.9462616822429907,0.9722174937723309,0.023200156480179944,0.1891906008333798,10,quantile
